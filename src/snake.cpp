@@ -6,12 +6,51 @@
 
 using namespace snake;
 
+constexpr int SPEED = 300;
+
 Snake::Snake(int x_pos, int y_pos, size_t length)
 {
     while (length--) {
         Snake::Segment segment {x_pos, y_pos};
         segments.push_front(std::move(segment));
         x_pos -= segment.get_length();
+    }
+}
+
+void Snake::change_direction(Direction direction)
+{
+    switch (direction) {
+        case UP:
+            x_vel = 0;
+            y_vel = -SPEED;
+            break;
+        case DOWN:
+            x_vel = 0;
+            y_vel = SPEED;
+            break;
+        case LEFT:
+            x_vel = -SPEED;
+            y_vel = 0;
+            break;
+        case RIGHT:
+            x_vel = SPEED;
+            y_vel = 0;
+            break;
+    }
+}
+
+void Snake::move()
+{
+    auto head = segments.begin();
+    int prev_x = head->get_x(), prev_y = head->get_y();
+    head->set_x(static_cast<int>(prev_x + x_vel / 60));
+    head->set_y(static_cast<int>(prev_y + y_vel / 60));
+    for (auto curr = ++segments.begin(); curr != segments.end(); curr++) {
+        int tmp_x = curr->get_x(), tmp_y = curr->get_y();
+        curr->set_x(prev_x);
+        curr->set_y(prev_y);
+        prev_x = tmp_x;
+        prev_y = tmp_y;
     }
 }
 

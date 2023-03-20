@@ -40,16 +40,24 @@ int main(void)
     }
 
     snake::Snake snake {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2};
+    snake.change_direction(snake::Direction::RIGHT);
 
-    SDL_RenderClear(renderer);
+    bool close_window = false;
 
-    snake.render(renderer);
-
-    SDL_RenderPresent(renderer);
-
-    SDL_PumpEvents();
-
-    SDL_Delay(5000);
+    while (!close_window) {
+        SDL_Event event;
+        SDL_PollEvent(&event);
+        switch (event.type) {
+            case SDL_QUIT:
+                close_window = true;
+                break;
+        }
+        snake.move();
+        SDL_RenderClear(renderer);
+        snake.render(renderer);
+        SDL_RenderPresent(renderer);
+        SDL_Delay(5000 / 60);
+    }
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
