@@ -8,10 +8,10 @@ using namespace snake;
 
 constexpr int SPEED = 300;
 
-Snake::Snake(int x_pos, int y_pos, size_t length)
+Snake::Snake(int x_pos, int y_pos, size_t length, int width)
 {
     while (length--) {
-        Snake::Segment segment {x_pos, y_pos};
+        Snake::Segment segment {x_pos, y_pos, width};
         segments.push_front(std::move(segment));
         x_pos -= segment.get_length();
     }
@@ -61,8 +61,8 @@ void Snake::render(SDL_Renderer *renderer) const
             std::bind(&Segment::render, std::placeholders::_1, renderer));
 }
 
-Snake::Segment::Segment(int x_pos, int y_pos)
-    : square{x_pos, y_pos, 10, 10} {}
+Snake::Segment::Segment(int x_pos, int y_pos, int width)
+    : square{x_pos, y_pos, width, width} {}
 
 void Snake::Segment::render(SDL_Renderer *renderer) const
 {

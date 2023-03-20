@@ -12,14 +12,14 @@ namespace snake {
 
     class Snake final : public GraphicalElement {
         public:
-            Snake(int x_pos, int y_pos, size_t length = 3);
+            Snake(int x_pos, int y_pos, size_t length = 3, int width = 10);
             void change_direction(Direction direction);
             void move();
             void render(SDL_Renderer *renderer) const override;
         private:
             class Segment final : public GraphicalElement {
                 public:
-                    Segment(int x_pos, int y_pos);
+                    Segment(int x_pos, int y_pos, int width);
                     size_t get_length() const { return square.w; }
                     int get_x() const { return square.x; }
                     int get_y() const { return square.y; }
@@ -32,7 +32,6 @@ namespace snake {
                     SDL_Color outline_color {0, 0, 0, 0};
             };
             std::forward_list<Segment> segments;
-            SDL_Renderer *renderer;
             int x_vel = 0, y_vel = 0;
     };
 }
