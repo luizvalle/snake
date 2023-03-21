@@ -44,6 +44,7 @@ int main(void)
 
     bool close_window = false;
 
+    int i = 0;
     while (!close_window) {
         SDL_Event event;
         SDL_PollEvent(&event);

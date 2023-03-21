@@ -2,36 +2,38 @@
 #define __SNAKE_HPP__
 
 #include <cstddef>
-#include <forward_list>
+#include <list>
 #include <SDL2/SDL.h>
-#include "graphical_element.hpp"
+#include "sprite.hpp"
 
 
 namespace snake {
     enum Direction { UP, DOWN, LEFT, RIGHT };
 
-    class Snake final : public GraphicalElement {
+    class Snake final : public Sprite {
         public:
-            Snake(int x_pos, int y_pos, size_t length = 3, int width = 10);
+            Snake(int x_pos, int y_pos, size_t length = 3, int width = 20,
+                    int speed = 100);
             void change_direction(Direction direction);
             void move();
             void render(SDL_Renderer *renderer) const override;
         private:
-            class Segment final : public GraphicalElement {
+            class Segment final : public Sprite {
                 public:
                     Segment(int x_pos, int y_pos, int width);
-                    size_t get_length() const { return square.w; }
-                    int get_x() const { return square.x; }
-                    int get_y() const { return square.y; }
-                    void set_x(int x_pos) { square.x = x_pos; };
-                    void set_y(int y_pos) { square.y = y_pos; };
+                    int get_x() const { return segment.x; }
+                    int get_y() const { return segment.y; }
+                    void set_x(int x) { segment.x = x; }
+                    void set_y(int y) { segment.y = y; }
                     void render(SDL_Renderer *renderer) const override;
                 private:
-                    SDL_Rect square;
-                    SDL_Color body_color {2, 100, 64, 255};
+                    SDL_Rect segment;
+                    SDL_Color fill_color {2, 100, 64, 255};
                     SDL_Color outline_color {0, 0, 0, 0};
             };
-            std::forward_list<Segment> segments;
+            std::list<Segment> segments;
+            int width;
+            int speed;
             int x_vel = 0, y_vel = 0;
     };
 }

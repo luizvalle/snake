@@ -8,7 +8,7 @@ snake_game: main.o snake.o
 main.o: main.cpp
 	$(CXX) $(CXXFLAGS) -c main.cpp
 
-snake.o: snake.cpp snake.hpp graphical_element.hpp
+snake.o: snake.cpp snake.hpp sprite.hpp
 	$(CXX) $(CXXFLAGS) -c snake.cpp
 
 all: clean snake_game
