@@ -12,8 +12,7 @@ namespace snake {
 
     class Snake final : public Sprite {
         public:
-            Snake(int x_pos, int y_pos, size_t length = 3, int width = 20,
-                    int speed = 100);
+            Snake(int x_pos, int y_pos, size_t length, int width);
             void change_direction(Direction direction);
             void move();
             void render(SDL_Renderer *renderer) const override;

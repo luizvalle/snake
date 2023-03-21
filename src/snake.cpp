@@ -6,7 +6,7 @@
 
 using namespace snake;
 
-Snake::Snake(int x_pos, int y_pos, size_t length, int w, int sp)
+Snake::Snake(int x_pos, int y_pos, size_t length, int w)
     : width{w}, speed{w}
 {
     while (length--) {
@@ -55,9 +55,9 @@ void Snake::move()
 
 void Snake::render(SDL_Renderer *renderer) const
 {
-    std::for_each(
-            segments.begin(), segments.end(),
-            std::bind(&Segment::render, std::placeholders::_1, renderer));
+    std::for_each(segments.begin(),
+                  segments.end(),
+                  std::bind(&Segment::render, std::placeholders::_1, renderer));
 }
 
 Snake::Segment::Segment(int x_pos, int y_pos, int width)
@@ -65,11 +65,16 @@ Snake::Segment::Segment(int x_pos, int y_pos, int width)
 
 void Snake::Segment::render(SDL_Renderer *renderer) const
 {
-    SDL_SetRenderDrawColor(
-            renderer, fill_color.r, fill_color.g, fill_color.b, fill_color.a); 
+    SDL_SetRenderDrawColor(renderer,
+                           fill_color.r,
+                           fill_color.g,
+                           fill_color.b,
+                           fill_color.a);
     SDL_RenderFillRect(renderer, &segment);
-    SDL_SetRenderDrawColor(
-            renderer, outline_color.r, outline_color.g, outline_color.b,
-            outline_color.a); 
+    SDL_SetRenderDrawColor(renderer,
+                           outline_color.r,
+                           outline_color.g,
+                           outline_color.b,
+                           outline_color.a);
     SDL_RenderDrawRect(renderer, &segment);
 }
