@@ -3,8 +3,10 @@
 
 #include <SDL2/SDL.h>
 
-struct Sprite {
-    virtual void render(SDL_Renderer *renderer) const = 0;
-};
+namespace snake {
+    struct Sprite {
+        virtual void render(SDL_Renderer *renderer) const = 0;
+    };
+}
 
 #endif
