@@ -4,6 +4,7 @@
 #include <SDL2/SDL_timer.h>
 #include "window.hpp"
 #include "snake.hpp"
+#include "controller.hpp"
 
 using namespace std;
 
@@ -21,11 +22,23 @@ int main(void)
 
     int i = 0;
     while (!close_window) {
-        SDL_Event event;
-        SDL_PollEvent(&event);
-        switch (event.type) {
-            case SDL_QUIT:
+        switch (snake::get_action()) {
+            case snake::EXIT:
                 close_window = true;
+                break;
+            case snake::MOVE_UP:
+                snake.change_direction(snake::Direction::UP);
+                break;
+            case snake::MOVE_DOWN:
+                snake.change_direction(snake::Direction::DOWN);
+                break;
+            case snake::MOVE_LEFT:
+                snake.change_direction(snake::Direction::LEFT);
+                break;
+            case snake::MOVE_RIGHT:
+                snake.change_direction(snake::Direction::RIGHT);
+                break;
+            default:
                 break;
         }
         snake.move();

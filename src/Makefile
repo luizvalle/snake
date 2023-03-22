@@ -2,8 +2,8 @@ CXX=clang++
 CXXFLAGS=-I/usr/local/include -D_THREAD_SAFE -std=c++20 -O2
 LDFLAGS=-L/usr/local/lib -lSDL2 -lSDL2_image
 
-snake_game: main.o snake.o window.o
-	$(CXX) main.o snake.o window.o $(LDFLAGS) -o snake_game
+snake_game: main.o snake.o window.o controller.o
+	$(CXX) main.o snake.o window.o controller.o $(LDFLAGS) -o snake_game
 
 main.o: main.cpp
 	$(CXX) $(CXXFLAGS) -c main.cpp
@@ -13,6 +13,9 @@ snake.o: snake.cpp snake.hpp sprite.hpp
 
 window.o: window.cpp window.hpp
 	$(CXX) $(CXXFLAGS) -c window.cpp
+
+controller.o: controller.cpp controller.hpp
+	$(CXX) $(CXXFLAGS) -c controller.cpp
 
 all: clean snake_game
 
