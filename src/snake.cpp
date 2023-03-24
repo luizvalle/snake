@@ -6,44 +6,41 @@
 
 namespace snake {
     Snake::Snake(int x_pos, int y_pos, size_t length, int w)
-        : width{w}, speed{w}
-    {
+        : m_width{w}, m_speed{w} {
         while (length--) {
-            Snake::Segment segment {x_pos, y_pos, width};
-            segments.push_back(std::move(segment));
-            x_pos -= width;
+            Snake::Segment segment {x_pos, y_pos, m_width};
+            m_segments.push_back(std::move(segment));
+            x_pos -= m_width;
         }
     }
 
-    void Snake::change_direction(Direction direction)
-    {
+    void Snake::change_direction(Direction direction) {
         switch (direction) {
             case UP:
-                x_vel = 0;
-                y_vel = -speed;
+                m_x_vel = 0;
+                m_y_vel = -m_speed;
                 break;
             case DOWN:
-                x_vel = 0;
-                y_vel = speed;
+                m_x_vel = 0;
+                m_y_vel = m_speed;
                 break;
             case LEFT:
-                x_vel = -speed;
-                y_vel = 0;
+                m_x_vel = -m_speed;
+                m_y_vel = 0;
                 break;
             case RIGHT:
-                x_vel = speed;
-                y_vel = 0;
+                m_x_vel = m_speed;
+                m_y_vel = 0;
                 break;
         }
     }
 
-    void Snake::move()
-    {
-        auto segment = segments.begin();
+    void Snake::move() {
+        auto segment = m_segments.begin();
         int prev_x = segment->get_x(), prev_y = segment->get_y();
-        segment->set_x(prev_x + x_vel);
-        segment->set_y(prev_y + y_vel);
-        while (++segment != segments.end()) {
+        segment->set_x(prev_x + m_x_vel);
+        segment->set_y(prev_y + m_y_vel);
+        while (++segment != m_segments.end()) {
             int tmp_x = segment->get_x(), tmp_y = segment->get_y();
             segment->set_x(prev_x);
             segment->set_y(prev_y);
@@ -52,29 +49,29 @@ namespace snake {
         }
     }
 
-    void Snake::render(SDL_Renderer *renderer) const
-    {
-        std::for_each(segments.begin(),
-                segments.end(),
-                std::bind(&Segment::render, std::placeholders::_1, renderer));
+    void Snake::render(SDL_Renderer *renderer) const {
+        std::for_each(m_segments.begin(),
+                      m_segments.end(),
+                      std::bind(&Segment::render,
+                                std::placeholders::_1,
+                                renderer));
     }
 
-    Snake::Segment::Segment(int x_pos, int y_pos, int width)
-        : segment{x_pos, y_pos, width, width} {}
+    Snake::Segment::Segment(int x, int y, int width)
+        : m_segment{x, y, width, width} {}
 
-    void Snake::Segment::render(SDL_Renderer *renderer) const
-    {
+    void Snake::Segment::render(SDL_Renderer *renderer) const {
         SDL_SetRenderDrawColor(renderer,
-                fill_color.r,
-                fill_color.g,
-                fill_color.b,
-                fill_color.a);
-        SDL_RenderFillRect(renderer, &segment);
+                m_fill_color.r,
+                m_fill_color.g,
+                m_fill_color.b,
+                m_fill_color.a);
+        SDL_RenderFillRect(renderer, &m_segment);
         SDL_SetRenderDrawColor(renderer,
-                outline_color.r,
-                outline_color.g,
-                outline_color.b,
-                outline_color.a);
-        SDL_RenderDrawRect(renderer, &segment);
+                m_outline_color.r,
+                m_outline_color.g,
+                m_outline_color.b,
+                m_outline_color.a);
+        SDL_RenderDrawRect(renderer, &m_segment);
     }
 }

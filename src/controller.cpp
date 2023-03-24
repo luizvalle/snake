@@ -2,8 +2,7 @@
 #include "controller.hpp"
 
 namespace snake {
-    static Action handle_key_press(const SDL_Event& event)
-    {
+    static Action _handle_key_press(const SDL_Event& event) {
         Action action;
         switch (event.key.keysym.scancode) {
             case SDL_SCANCODE_W:
@@ -29,8 +28,7 @@ namespace snake {
         return action;
     }
 
-    Action get_action()
-    {
+    Action get_action() {
         SDL_Event event;
         if (!SDL_PollEvent(&event)) {
             return NO_OP;
@@ -42,7 +40,7 @@ namespace snake {
                 action = EXIT;
                 break;
             case SDL_KEYDOWN:
-                action = handle_key_press(event);
+                action = _handle_key_press(event);
                 break;
             default:
                 action = NO_OP;

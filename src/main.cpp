@@ -10,8 +10,7 @@ using namespace std;
 
 constexpr size_t WINDOW_WIDTH = 640, WINDOW_HEIGHT = 480;
 
-int main(void)
-{
+int main(void) {
     snake::Window window {WINDOW_WIDTH, WINDOW_HEIGHT, "Snake"};
 
 
