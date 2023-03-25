@@ -15,7 +15,10 @@ namespace snake_game {
       Window& operator=(Window&&) = delete;
       ~Window();
       void clear() { SDL_RenderClear(m_renderer); }
-      void render(const Sprite& sprite) { sprite.render(m_renderer); }
+      void render(const Sprite& sprite) {
+          sprite.render(m_renderer);
+          SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+      }
       void show() { SDL_RenderPresent(m_renderer); };
     private:
       SDL_Window *m_window;

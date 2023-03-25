@@ -4,6 +4,7 @@
 #include <SDL2/SDL_timer.h>
 #include "window.hpp"
 #include "snake.hpp"
+#include "apple.hpp"
 #include "controller.hpp"
 
 using namespace std;
@@ -16,6 +17,8 @@ int main(void) {
 
     snake_game::Snake snake {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 15, 20};
     snake.change_direction(snake_game::Direction::RIGHT);
+
+    snake_game::Apple apple {WINDOW_WIDTH / 4, WINDOW_HEIGHT / 4, 20};
 
     bool close_window = false;
 
@@ -43,6 +46,7 @@ int main(void) {
         snake.move();
         window.clear();
         window.render(snake);
+        window.render(apple);
         window.show();
         if (snake.is_out_of_bounds(WINDOW_WIDTH, WINDOW_HEIGHT)
             || snake.self_collided()) {
