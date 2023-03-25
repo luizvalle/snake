@@ -57,9 +57,6 @@ namespace snake {
                                 renderer));
     }
 
-    Snake::Segment::Segment(int x, int y, int width)
-        : m_segment{x, y, width, width} {}
-
     void Snake::Segment::render(SDL_Renderer *renderer) const {
         SDL_SetRenderDrawColor(renderer,
                 m_fill_color.r,

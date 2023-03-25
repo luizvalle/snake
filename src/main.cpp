@@ -40,6 +40,9 @@ int main(void) {
             default:
                 break;
         }
+        if (snake.is_out_of_bounds(WINDOW_WIDTH, WINDOW_HEIGHT)) {
+            close_window = true;
+        }
         snake.move();
         window.clear();
         window.render(snake);
