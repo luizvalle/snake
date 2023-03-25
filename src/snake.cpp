@@ -69,6 +69,24 @@ namespace snake_game {
         return false;
     }
 
+    void Snake::add_segment() {
+        auto segment = --m_segments.end();
+        const Segment& tail = *segment;
+        int new_x, new_y;
+        if (segment-- == m_segments.begin()) { // Only one segment
+            new_x = tail.get_x() - m_x_vel;
+            new_y = tail.get_y() - m_y_vel;
+        } else {
+            const Segment& before_tail = *segment;
+            int x_diff = before_tail.get_x() - tail.get_x();
+            int y_diff = before_tail.get_y() - tail.get_y();
+            new_x = tail.get_x() + x_diff;
+            new_y = tail.get_y() + y_diff;
+        }
+        Segment new_segment {new_x, new_y, m_width};
+        m_segments.push_back(std::move(new_segment));
+    }
+
     void Snake::render(SDL_Renderer *renderer) const {
         std::for_each(m_segments.begin(),
                       m_segments.end(),

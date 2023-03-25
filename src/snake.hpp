@@ -16,6 +16,7 @@ namespace snake_game {
             void change_direction(Direction direction);
             void move();
             bool self_collided() const;
+            void add_segment();
             void render(SDL_Renderer *renderer) const override;
         private:
             const BoundingBox& _get_bounding_box() const override {
@@ -40,8 +41,8 @@ namespace snake_game {
                     SDL_Color m_outline_color {0, 0, 0, 0};
             };
             std::list<Segment> m_segments;
-            int m_width;
-            int m_speed;
+            const int m_width;
+            const int m_speed;
             int m_x_vel = 0, m_y_vel = 0;
     };
 }

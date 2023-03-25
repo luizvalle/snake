@@ -15,7 +15,7 @@ int main(void) {
     snake_game::Window window {WINDOW_WIDTH, WINDOW_HEIGHT, "Snake"};
 
 
-    snake_game::Snake snake {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 15, 20};
+    snake_game::Snake snake {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 3, 20};
     snake.change_direction(snake_game::Direction::RIGHT);
 
     snake_game::Apple apple {WINDOW_WIDTH / 4, WINDOW_HEIGHT / 4, 20};
@@ -49,8 +49,11 @@ int main(void) {
         window.render(apple);
         window.show();
         if (snake.is_out_of_bounds(WINDOW_WIDTH, WINDOW_HEIGHT)
-            || snake.self_collided() || snake.collided_with(apple)) {
+            || snake.self_collided()) {
             close_window = true;
+        }
+        if (snake.collided_with(apple)) {
+            snake.add_segment();
         }
         SDL_Delay(7000 / 60);
     }
