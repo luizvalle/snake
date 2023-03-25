@@ -11,31 +11,31 @@ using namespace std;
 constexpr size_t WINDOW_WIDTH = 640, WINDOW_HEIGHT = 480;
 
 int main(void) {
-    snake::Window window {WINDOW_WIDTH, WINDOW_HEIGHT, "Snake"};
+    snake_game::Window window {WINDOW_WIDTH, WINDOW_HEIGHT, "Snake"};
 
 
-    snake::Snake snake {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 15, 20};
-    snake.change_direction(snake::Direction::RIGHT);
+    snake_game::Snake snake {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 15, 20};
+    snake.change_direction(snake_game::Direction::RIGHT);
 
     bool close_window = false;
 
     int i = 0;
     while (!close_window) {
-        switch (snake::get_action()) {
-            case snake::EXIT:
+        switch (snake_game::get_action()) {
+            case snake_game::EXIT:
                 close_window = true;
                 break;
-            case snake::MOVE_UP:
-                snake.change_direction(snake::Direction::UP);
+            case snake_game::MOVE_UP:
+                snake.change_direction(snake_game::Direction::UP);
                 break;
-            case snake::MOVE_DOWN:
-                snake.change_direction(snake::Direction::DOWN);
+            case snake_game::MOVE_DOWN:
+                snake.change_direction(snake_game::Direction::DOWN);
                 break;
-            case snake::MOVE_LEFT:
-                snake.change_direction(snake::Direction::LEFT);
+            case snake_game::MOVE_LEFT:
+                snake.change_direction(snake_game::Direction::LEFT);
                 break;
-            case snake::MOVE_RIGHT:
-                snake.change_direction(snake::Direction::RIGHT);
+            case snake_game::MOVE_RIGHT:
+                snake.change_direction(snake_game::Direction::RIGHT);
                 break;
             default:
                 break;

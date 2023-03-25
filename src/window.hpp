@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include "sprite.hpp"
 
-namespace snake {
+namespace snake_game {
   class Window final {
     public:
       Window(int window, int height, std::string name);

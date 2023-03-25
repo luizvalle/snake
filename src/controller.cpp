@@ -1,7 +1,7 @@
 #include <SDL2/SDL.h>
 #include "controller.hpp"
 
-namespace snake {
+namespace snake_game {
     static Action _handle_key_press(const SDL_Event& event) {
         Action action;
         switch (event.key.keysym.scancode) {

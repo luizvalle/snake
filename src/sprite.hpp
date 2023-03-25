@@ -5,7 +5,7 @@
 #include <cstddef>
 #include <SDL2/SDL.h>
 
-namespace snake {
+namespace snake_game {
     struct BoundingBox final {
         BoundingBox(int x, int y, int w, int h)
             : m_x{x}, m_y{y}, m_w{w}, m_h{h} {}

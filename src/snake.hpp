@@ -7,7 +7,7 @@
 #include "sprite.hpp"
 
 
-namespace snake {
+namespace snake_game {
     enum Direction { UP, DOWN, LEFT, RIGHT };
 
     class Snake final : public Sprite {

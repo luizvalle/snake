@@ -3,7 +3,7 @@
 
 #include <SDL2/SDL.h>
 
-namespace snake {
+namespace snake_game {
     enum Action { NO_OP, EXIT, MOVE_UP, MOVE_DOWN, MOVE_LEFT, MOVE_RIGHT };
 
     Action get_action();

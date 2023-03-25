@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include "snake.hpp"
 
-namespace snake {
+namespace snake_game {
     Snake::Snake(int x_pos, int y_pos, size_t length, int w)
         : m_width{w}, m_speed{w} {
         if (length < 1) {
