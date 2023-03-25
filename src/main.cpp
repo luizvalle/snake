@@ -49,7 +49,7 @@ int main(void) {
         window.render(apple);
         window.show();
         if (snake.is_out_of_bounds(WINDOW_WIDTH, WINDOW_HEIGHT)
-            || snake.self_collided()) {
+            || snake.self_collided() || snake.collided_with(apple)) {
             close_window = true;
         }
         SDL_Delay(7000 / 60);

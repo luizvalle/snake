@@ -20,6 +20,9 @@ namespace snake_game {
             return _get_bounding_box().is_out_of_bounds(window_width,
                                                        window_height);
         }
+        bool collided_with(const Sprite& other) {
+            return _get_bounding_box().intersects(other._get_bounding_box());
+        }
     private:
         virtual const BoundingBox& _get_bounding_box() const = 0;
     };
