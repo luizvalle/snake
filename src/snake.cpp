@@ -83,12 +83,12 @@ namespace snake_game {
                 m_fill_color.g,
                 m_fill_color.b,
                 m_fill_color.a);
-        SDL_RenderFillRect(renderer, &m_segment);
+        SDL_RenderFillRect(renderer, &m_bounding_box);
         SDL_SetRenderDrawColor(renderer,
                 m_outline_color.r,
                 m_outline_color.g,
                 m_outline_color.b,
                 m_outline_color.a);
-        SDL_RenderDrawRect(renderer, &m_segment);
+        SDL_RenderDrawRect(renderer, &m_bounding_box);
     }
 }

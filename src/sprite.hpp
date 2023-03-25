@@ -6,15 +6,12 @@
 #include <SDL2/SDL.h>
 
 namespace snake_game {
-    struct BoundingBox final {
-        BoundingBox(int x, int y, int w, int h)
-            : m_x{x}, m_y{y}, m_w{w}, m_h{h} {}
+    struct BoundingBox final : SDL_Rect {
         bool is_out_of_bounds(int window_width, int window_height) const {
-            return (m_x <= 0 || (m_x + m_w) >= window_width || m_y <= 0
-                    || (m_y + m_h) >= window_height);
+            return (x <= 0 || (x + w) >= window_width || y <= 0
+                    || (y + h) >= window_height);
         }
         bool intersects(const BoundingBox& other) const;
-        int m_x, m_y, m_w, m_h;
     };
     struct Sprite {
     public:
