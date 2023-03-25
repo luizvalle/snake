@@ -14,7 +14,7 @@ int main(void) {
     snake::Window window {WINDOW_WIDTH, WINDOW_HEIGHT, "Snake"};
 
 
-    snake::Snake snake {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 3, 20};
+    snake::Snake snake {WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 15, 20};
     snake.change_direction(snake::Direction::RIGHT);
 
     bool close_window = false;
@@ -40,14 +40,15 @@ int main(void) {
             default:
                 break;
         }
-        if (snake.is_out_of_bounds(WINDOW_WIDTH, WINDOW_HEIGHT)) {
-            close_window = true;
-        }
         snake.move();
         window.clear();
         window.render(snake);
         window.show();
-        SDL_Delay(5000 / 60);
+        if (snake.is_out_of_bounds(WINDOW_WIDTH, WINDOW_HEIGHT)
+            || snake.self_collided()) {
+            close_window = true;
+        }
+        SDL_Delay(7000 / 60);
     }
 
     return 0;

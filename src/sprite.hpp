@@ -13,6 +13,7 @@ namespace snake {
             return (m_x <= 0 || (m_x + m_w) >= window_width || m_y <= 0
                     || (m_y + m_h) >= window_height);
         }
+        bool intersects(const BoundingBox& other) const;
         int m_x, m_y, m_w, m_h;
     };
     struct Sprite {

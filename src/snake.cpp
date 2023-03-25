@@ -1,12 +1,17 @@
 #include <utility>
 #include <algorithm>
 #include <functional>
+#include <stdexcept>
 #include <SDL2/SDL.h>
 #include "snake.hpp"
 
 namespace snake {
     Snake::Snake(int x_pos, int y_pos, size_t length, int w)
         : m_width{w}, m_speed{w} {
+        if (length < 1) {
+            throw new std::invalid_argument(
+                    "The length of the snake must be at least 1.");
+        }
         while (length--) {
             Snake::Segment segment {x_pos, y_pos, m_width};
             m_segments.push_back(std::move(segment));
@@ -47,6 +52,21 @@ namespace snake {
             prev_x = tmp_x;
             prev_y = tmp_y;
         }
+    }
+
+    bool Snake::self_collided() const {
+        auto segment = m_segments.begin();
+        auto head_bounding_box = segment->get_bounding_box();
+        if (++segment == m_segments.end()) { // Skip second segment
+            return false;
+        }
+        while (++segment != m_segments.end()) {
+            auto bounding_box = segment->get_bounding_box();
+            if (head_bounding_box.intersects(bounding_box)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     void Snake::render(SDL_Renderer *renderer) const {

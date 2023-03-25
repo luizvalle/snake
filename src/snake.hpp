@@ -15,6 +15,7 @@ namespace snake {
             Snake(int x_pos, int y_pos, size_t length, int width);
             void change_direction(Direction direction);
             void move();
+            bool self_collided() const;
             void render(SDL_Renderer *renderer) const override;
         private:
             const BoundingBox& _get_bounding_box() const override {
