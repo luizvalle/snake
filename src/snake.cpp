@@ -5,6 +5,14 @@
 #include <SDL2/SDL.h>
 #include "snake.hpp"
 
+static inline int _sign(int a) {
+    return (a > 0) - (a < 0);
+}
+
+static inline bool _is_reverse(int a, int b) {
+    return (_sign(a) + _sign(b)) == 0;
+}
+
 namespace snake_game {
     Snake::Snake(int x_pos, int y_pos, size_t length, int w)
         : m_width{w}, m_speed{w} {
@@ -20,24 +28,31 @@ namespace snake_game {
     }
 
     void Snake::change_direction(Direction direction) {
+        int new_x_vel, new_y_vel;
         switch (direction) {
             case UP:
-                m_x_vel = 0;
-                m_y_vel = -m_speed;
+                new_x_vel = 0;
+                new_y_vel = -m_speed;
                 break;
             case DOWN:
-                m_x_vel = 0;
-                m_y_vel = m_speed;
+                new_x_vel = 0;
+                new_y_vel = m_speed;
                 break;
             case LEFT:
-                m_x_vel = -m_speed;
-                m_y_vel = 0;
+                new_x_vel = -m_speed;
+                new_y_vel = 0;
                 break;
             case RIGHT:
-                m_x_vel = m_speed;
-                m_y_vel = 0;
+                new_x_vel = m_speed;
+                new_y_vel = 0;
                 break;
         }
+        if (_is_reverse(new_x_vel, m_x_vel)
+            && _is_reverse(new_y_vel, m_y_vel)) {
+            return; // Not allow snake to go back on itself
+        }
+        m_x_vel = new_x_vel;
+        m_y_vel = new_y_vel;
     }
 
     void Snake::move() {

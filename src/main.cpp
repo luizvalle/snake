@@ -55,7 +55,7 @@ int main(void) {
         if (snake.collided_with(apple)) {
             snake.add_segment();
         }
-        SDL_Delay(7000 / 60);
+        SDL_Delay(4000 / 60);
     }
 
     return 0;
