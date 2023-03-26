@@ -56,6 +56,9 @@ namespace snake_game {
     }
 
     void Snake::move() {
+        if (!m_x_vel && !m_y_vel) {
+            return;
+        }
         auto segment = m_segments.begin();
         int prev_x = segment->get_x(), prev_y = segment->get_y();
         segment->set_x(prev_x + m_x_vel);

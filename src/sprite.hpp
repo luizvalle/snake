@@ -16,11 +16,11 @@ namespace snake_game {
     struct Sprite {
     public:
         virtual void render(SDL_Renderer *renderer) const = 0;
-        bool is_out_of_bounds(int window_width, int window_height) {
+        bool is_out_of_bounds(int window_width, int window_height) const {
             return _get_bounding_box().is_out_of_bounds(window_width,
                                                        window_height);
         }
-        bool collided_with(const Sprite& other) {
+        bool collided_with(const Sprite& other) const {
             return _get_bounding_box().intersects(other._get_bounding_box());
         }
     private:

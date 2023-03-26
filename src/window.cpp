@@ -5,7 +5,7 @@
 #include "window.hpp"
 
 namespace snake_game {
-    Window::Window(int width, int height, std::string name) {
+    Window::Window(size_t width, size_t height, std::string name) {
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER)) {
             // TODO: Error
         }
