@@ -22,7 +22,6 @@ namespace snake_game {
             const BoundingBox& _get_bounding_box() const override {
                 return m_segments.begin()->get_bounding_box();
             }
-        private:
             class Segment final {
                 public:
                     Segment(int x, int y, int width)
