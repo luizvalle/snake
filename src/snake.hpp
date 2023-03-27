@@ -12,7 +12,7 @@ namespace snake_game {
 
     class Snake final : public Sprite {
         public:
-            Snake(int x, int y, size_t length, size_t width);
+            Snake(size_t x, size_t y, size_t length, size_t width);
             void set_direction(Direction new_direction);
             void move();
             bool self_collided() const;
@@ -24,12 +24,15 @@ namespace snake_game {
             }
             class Segment final {
                 public:
-                    Segment(int x, int y, int width)
-                        : m_bounding_box{x, y, width, width} {}
-                    int get_x() const { return m_bounding_box.x; }
-                    int get_y() const { return m_bounding_box.y; }
-                    void set_x(int x) { m_bounding_box.x = x; }
-                    void set_y(int y) { m_bounding_box.y = y; }
+                    Segment(size_t x, size_t y, size_t width)
+                        : m_bounding_box{static_cast<int>(x),
+                                         static_cast<int>(y),
+                                         static_cast<int>(width),
+                                         static_cast<int>(width)} {}
+                    size_t get_x() const { return m_bounding_box.x; }
+                    size_t get_y() const { return m_bounding_box.y; }
+                    void set_x(size_t x) { m_bounding_box.x = x; }
+                    void set_y(size_t y) { m_bounding_box.y = y; }
                     void render(SDL_Renderer *renderer) const;
                     const BoundingBox& get_bounding_box() const {
                         return m_bounding_box;

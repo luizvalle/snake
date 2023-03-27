@@ -1,6 +1,7 @@
 #ifndef __WINDOW_HPP__
 #define __WINDOW_HPP__
 
+#include <cstddef>
 #include <string>
 #include <SDL2/SDL.h>
 #include "sprite.hpp"
@@ -20,12 +21,12 @@ namespace snake_game {
           SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
       }
       void show() { SDL_RenderPresent(m_renderer); };
-      int get_width() const {
+      size_t get_width() const {
           int w;
           SDL_GetWindowSize(m_window, &w, nullptr);
           return w;
       }
-      int get_height() const {
+      size_t get_height() const {
           int h;
           SDL_GetWindowSize(m_window, nullptr, &h);
           return h;

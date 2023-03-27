@@ -11,7 +11,7 @@ namespace snake_game {
                || (d1 == LEFT && d2 == RIGHT) || (d1 == RIGHT && d2 == LEFT);
     }
 
-    Snake::Snake(int x, int y, size_t length, size_t width)
+    Snake::Snake(size_t x, size_t y, size_t length, size_t width)
         : m_width{width} {
         if (length < 1) {
             throw new std::invalid_argument(
@@ -36,7 +36,7 @@ namespace snake_game {
 
     void Snake::move() {
         const auto& head = m_segments.front();
-        int new_x = head.get_x(), new_y = head.get_y();
+        size_t new_x = head.get_x(), new_y = head.get_y();
         switch (direction) {
             case STOPPED:
                 return;

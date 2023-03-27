@@ -1,14 +1,18 @@
 #ifndef __APPLE_HPP__
 #define __APPLE_HPP__
 
+#include <cstddef>
 #include <SDL2/SDL.h>
 #include "sprite.hpp"
 
 namespace snake_game {
     class Apple final : public Sprite {
         public:
-            Apple(int x, int y, int width)
-                : m_bounding_box{x, y, width, width} {}
+            Apple(size_t x, size_t y, size_t width)
+                : m_bounding_box{static_cast<int>(x),
+                                 static_cast<int>(y),
+                                 static_cast<int>(width),
+                                 static_cast<int>(width)} {}
             void render(SDL_Renderer *renderer) const override;
         private:
             const BoundingBox& _get_bounding_box() const override {
