@@ -1,7 +1,7 @@
 #ifndef __GAME_HPP__
 #define __GAME_HPP__
 
-#include <forward_list>
+#include <list>
 #include "window.hpp"
 #include "snake.hpp"
 #include "apple.hpp"
@@ -18,14 +18,11 @@ namespace snake_game {
         private:
             void _handle_input();
             void _render();
-            bool _is_out_of_bounds(const Sprite& sprite) const {
-                return sprite.is_out_of_bounds(window.get_width(),
-                                               window.get_height());
-            }
-            Window window;
-            Snake snake;
-            std::forward_list<Apple> apples;
-            bool game_over = false;
+            void _handle_collisions();
+            Window m_window;
+            Snake m_snake;
+            std::list<Apple> m_apples;
+            bool m_game_over = false;
     };
 }
 

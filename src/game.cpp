@@ -18,20 +18,18 @@ static constexpr float MILLISECOND_DELAY_BETWEEN_FRAMES = 1000 / FPS;
 
 namespace snake_game {
     Game::Game() 
-        : window{WINDOW_WIDTH, WINDOW_HEIGHT, GAME_NAME},
-        snake{WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, SNAKE_INIT_LENGTH, SNAKE_WIDTH}
+        : m_window{WINDOW_WIDTH, WINDOW_HEIGHT, GAME_NAME},
+        m_snake{WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, SNAKE_INIT_LENGTH,
+                SNAKE_WIDTH}
     {}
 
     void Game::run() {
-        while (!game_over) {
+        while (!m_game_over) {
             uint64_t start = SDL_GetPerformanceCounter();
             _handle_input();
-            snake.move();
+            m_snake.move();
             _render();
-            if (snake.self_collided() ||
-                _is_out_of_bounds(snake)) {
-                game_over = true;
-            }
+            _handle_collisions();
             uint64_t end = SDL_GetPerformanceCounter();
             float elapsed_ms = (end - start) / static_cast<float>(
                     SDL_GetPerformanceFrequency()) * 1000.0f;
@@ -41,21 +39,25 @@ namespace snake_game {
     }
 
     void Game::_handle_input() {
-        switch (get_action()) {
-            case EXIT:
-                game_over = true;
-                break;
+        Action a = get_action();
+        if (a == EXIT) {
+            m_game_over = true;
+            return;
+        }
+        Action last_action = a;
+        for (; a != NO_OP; last_action = a, a = get_action()) {}
+        switch (last_action) {
             case MOVE_UP:
-                snake.change_direction(Direction::UP);
+                m_snake.set_direction(Direction::UP);
                 break;
             case MOVE_DOWN:
-                snake.change_direction(Direction::DOWN);
+                m_snake.set_direction(Direction::DOWN);
                 break;
             case MOVE_LEFT:
-                snake.change_direction(Direction::LEFT);
+                m_snake.set_direction(Direction::LEFT);
                 break;
             case MOVE_RIGHT:
-                snake.change_direction(Direction::RIGHT);
+                m_snake.set_direction(Direction::RIGHT);
                 break;
             default:
                 break;
@@ -64,12 +66,21 @@ namespace snake_game {
 
     void Game::_render() {
         using namespace std::placeholders;
-        window.clear();
-        window.render(snake);
-        std::for_each(apples.begin(),
-                      apples.end(),
-                      std::bind(&Window::render, &window, _1));
-        window.show();
+        m_window.clear();
+        m_window.render(m_snake);
+        std::for_each(m_apples.begin(),
+                      m_apples.end(),
+                      std::bind(&Window::render, &m_window, _1));
+        m_window.show();
+    }
+
+    void Game::_handle_collisions() {
+        size_t window_width = m_window.get_width();
+        size_t window_height = m_window.get_height();
+        if (m_snake.self_collided()
+            || m_snake.is_out_of_bounds(window_width, window_height)) {
+            m_game_over = true;
+            return;
+        }
     }
 }
-

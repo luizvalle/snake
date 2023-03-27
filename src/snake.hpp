@@ -8,12 +8,12 @@
 
 
 namespace snake_game {
-    enum Direction { UP, DOWN, LEFT, RIGHT };
+    enum Direction { STOPPED, UP, DOWN, LEFT, RIGHT };
 
     class Snake final : public Sprite {
         public:
-            Snake(int x_pos, int y_pos, size_t length, int width);
-            void change_direction(Direction direction);
+            Snake(int x, int y, size_t length, size_t width);
+            void set_direction(Direction new_direction);
             void move();
             bool self_collided() const;
             void add_segment();
@@ -41,9 +41,8 @@ namespace snake_game {
                     SDL_Color m_outline_color {0, 0, 0, 0};
             };
             std::list<Segment> m_segments;
-            const int m_width;
-            const int m_speed;
-            int m_x_vel = 0, m_y_vel = 0;
+            const size_t m_width;
+            Direction direction = STOPPED;
     };
 }
 

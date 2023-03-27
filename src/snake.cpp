@@ -5,81 +5,69 @@
 #include <SDL2/SDL.h>
 #include "snake.hpp"
 
-static inline int _sign(int a) {
-    return (a > 0) - (a < 0);
-}
-
-static inline bool _is_reverse(int a, int b) {
-    return (_sign(a) + _sign(b)) == 0;
-}
-
 namespace snake_game {
-    Snake::Snake(int x_pos, int y_pos, size_t length, int w)
-        : m_width{w}, m_speed{w} {
+    static inline bool _is_opposite_direction(Direction d1, Direction d2) {
+        return (d1 == UP && d2 == DOWN) || (d1 == DOWN && d2 == UP)
+               || (d1 == LEFT && d2 == RIGHT) || (d1 == RIGHT && d2 == LEFT);
+    }
+
+    Snake::Snake(int x, int y, size_t length, size_t width)
+        : m_width{width} {
         if (length < 1) {
             throw new std::invalid_argument(
                     "The length of the snake must be at least 1.");
         }
+        if (width < 1) {
+            throw new std::invalid_argument(
+                    "The width of the snake must be at least 1.");
+        }
         while (length--) {
-            Snake::Segment segment {x_pos, y_pos, m_width};
-            m_segments.push_back(std::move(segment));
-            x_pos -= m_width;
+            m_segments.emplace_back(x, y, m_width);
+            x -= m_width;
         }
     }
 
-    void Snake::change_direction(Direction direction) {
-        int new_x_vel, new_y_vel;
-        switch (direction) {
-            case UP:
-                new_x_vel = 0;
-                new_y_vel = -m_speed;
-                break;
-            case DOWN:
-                new_x_vel = 0;
-                new_y_vel = m_speed;
-                break;
-            case LEFT:
-                new_x_vel = -m_speed;
-                new_y_vel = 0;
-                break;
-            case RIGHT:
-                new_x_vel = m_speed;
-                new_y_vel = 0;
-                break;
+    void Snake::set_direction(Direction new_direction) {
+        if (_is_opposite_direction(direction, new_direction)) {
+            return;
         }
-        if (_is_reverse(new_x_vel, m_x_vel)
-            && _is_reverse(new_y_vel, m_y_vel)) {
-            return; // Not allow snake to go back on itself
-        }
-        m_x_vel = new_x_vel;
-        m_y_vel = new_y_vel;
+        direction = new_direction;
     }
 
     void Snake::move() {
-        if (!m_x_vel && !m_y_vel) {
-            return;
+        const auto& head = m_segments.front();
+        int new_x = head.get_x(), new_y = head.get_y();
+        switch (direction) {
+            case STOPPED:
+                return;
+            case UP:
+                new_y -= m_width;
+                break;
+            case DOWN:
+                new_y += m_width;
+                break;
+            case LEFT:
+                new_x -= m_width;
+                break;
+            case RIGHT:
+                new_x += m_width;
+                break;
         }
-        auto segment = m_segments.begin();
-        int prev_x = segment->get_x(), prev_y = segment->get_y();
-        segment->set_x(prev_x + m_x_vel);
-        segment->set_y(prev_y + m_y_vel);
-        while (++segment != m_segments.end()) {
-            int tmp_x = segment->get_x(), tmp_y = segment->get_y();
-            segment->set_x(prev_x);
-            segment->set_y(prev_y);
-            prev_x = tmp_x;
-            prev_y = tmp_y;
-        }
+        auto tail_ptr = --m_segments.end();
+        tail_ptr->set_x(new_x);
+        tail_ptr->set_y(new_y);
+        m_segments.splice(m_segments.begin(), m_segments, tail_ptr);
     }
 
     bool Snake::self_collided() const {
-        auto segment = m_segments.begin();
-        auto head_bounding_box = segment->get_bounding_box();
-        if (++segment == m_segments.end()) { // Skip second segment
+        if (m_segments.size() < 4) {
             return false;
         }
-        while (++segment != m_segments.end()) {
-            auto bounding_box = segment->get_bounding_box();
+        auto segment_ptr = m_segments.begin();
+        auto head_bounding_box = (segment_ptr++)->get_bounding_box();
+        ++segment_ptr; // Skip second segment
+        for (; segment_ptr != m_segments.end(); ++segment_ptr) {
+            auto bounding_box = segment_ptr->get_bounding_box();
             if (head_bounding_box.intersects(bounding_box)) {
                 return true;
             }
@@ -88,21 +76,8 @@ namespace snake_game {
     }
 
     void Snake::add_segment() {
-        auto segment = --m_segments.end();
-        const Segment& tail = *segment;
-        int new_x, new_y;
-        if (segment-- == m_segments.begin()) { // Only one segment
-            new_x = tail.get_x() - m_x_vel;
-            new_y = tail.get_y() - m_y_vel;
-        } else {
-            const Segment& before_tail = *segment;
-            int x_diff = before_tail.get_x() - tail.get_x();
-            int y_diff = before_tail.get_y() - tail.get_y();
-            new_x = tail.get_x() + x_diff;
-            new_y = tail.get_y() + y_diff;
-        }
-        Segment new_segment {new_x, new_y, m_width};
-        m_segments.push_back(std::move(new_segment));
+        const auto& tail = m_segments.back();
+        m_segments.emplace_back(tail.get_x(), tail.get_y(), m_width);
     }
 
     void Snake::render(SDL_Renderer *renderer) const {
