@@ -10,14 +10,18 @@ namespace snake_game {
     class Entity {
         public:
             template<typename T>
+            bool has_component() const {
+                T *component = _get_component<T>();
+                return component != nullptr;
+            }
+
+            template<typename T>
             T& get_component() {
-                for (auto& component : components) {
-                    T *component_ptr = dynamic_cast<T*>(component.get());
-                    if (component_ptr) {
-                        return *component_ptr;
-                    }
+                T *component = _get_component<T>();
+                if (!component) {
+                    throw new std::runtime_error("Could not find component.");
                 }
-                throw new std::runtime_error("Component not found.");
+                return *component;
             }
 
             template<typename T, typename... TArgs>
@@ -27,6 +31,16 @@ namespace snake_game {
                 return *component;
             }
         private:
+            template<typename T>
+            T* _get_component() const {
+                for (auto& component : components) {
+                    T *component_ptr = dynamic_cast<T*>(component.get());
+                    if (component_ptr) {
+                        return component_ptr;
+                    }
+                }
+                return nullptr;
+            }
             std::vector<std::unique_ptr<Component>> components;
     };
 }
