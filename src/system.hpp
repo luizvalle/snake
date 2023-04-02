@@ -19,6 +19,13 @@ namespace snake_game {
                                 const RectangleRenderComponent& render);
             void _render_snake(Entity& entity);
     };
+
+    class MovementSystem : public System {
+        public:
+            virtual void update(std::vector<Entity>& entities) override;
+        private:
+            void _move_snake(Entity& entity);
+    };
 }
 
 #endif

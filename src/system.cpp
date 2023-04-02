@@ -24,7 +24,7 @@ namespace snake_game {
     void RenderSystem::_render_normal(const PositionComponent& position,
                                       const RectangleRenderComponent& render) {
         SDL_Renderer *renderer = Renderer::get_instance().get();
-        SDL_Rect rect {position.x, position.y, render.w, render.h};
+        SDL_Rect rect {position.x, position.y, render.rect.w, render.rect.h};
         SDL_SetRenderDrawColor(renderer,
                 render.fill_color.r,
                 render.fill_color.g,
@@ -43,8 +43,43 @@ namespace snake_game {
         const auto& snake_component = entity.get_component<SnakeComponent>();
         for (const auto& segment : snake_component.segments) {
             const auto& position = segment.position_component;
-            const auto& render = segment.render_component;
+            const auto& render = segment.rectangle_render_component;
             _render_normal(position, render);
         }
+    }
+
+    void MovementSystem::update(std::vector<Entity>& entities) {
+        for (auto& entity : entities) {
+            if (entity.has_component<SnakeComponent>()
+                && entity.has_component<VelocityComponent>()) {
+                _move_snake(entity);
+            }
+        }
+    }
+
+    void MovementSystem::_move_snake(Entity& entity) {
+        auto& segments = entity.get_component<SnakeComponent>().segments;
+        const auto& velocity_component = entity.get_component<VelocityComponent>();
+        const auto& head = segments.front();
+        int16_t new_x = head.position_component.x;
+        int16_t new_y = head.position_component.y;
+        switch (velocity_component.direction) {
+            case VelocityComponent::Direction::UP:
+                new_y -= velocity_component.speed;
+                break;
+            case VelocityComponent::Direction::DOWN:
+                new_y += velocity_component.speed;
+                break;
+            case VelocityComponent::Direction::LEFT:
+                new_x -= velocity_component.speed;
+                break;
+            case VelocityComponent::Direction::RIGHT:
+                new_x += velocity_component.speed;
+                break;
+        }
+        auto& tail = segments.back();
+        tail.position_component.x = new_x;
+        tail.position_component.y = new_y;
+        segments.splice(segments.begin(), segments, --segments.end());
     }
 }

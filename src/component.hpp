@@ -2,7 +2,7 @@
 #define __COMPONENTS_HPP__
 
 #include <cstdint>
-#include <vector>
+#include <list>
 
 namespace snake_game {
     struct Component {
@@ -10,8 +10,8 @@ namespace snake_game {
     };
 
     struct PositionComponent final : public Component {
-        PositionComponent(uint16_t x, uint16_t y) : x{x}, y{y} {} 
-        uint16_t x, y;
+        PositionComponent(int16_t x, int16_t y) : x{x}, y{y} {} 
+        int16_t x, y;
     };
 
     struct VelocityComponent final : public Component {
@@ -21,44 +21,39 @@ namespace snake_game {
         uint16_t speed;
         Direction direction;
     };
+    
+    struct ColorComponent : public Component {
+        ColorComponent(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+            : r{r}, g{b}, b{b}, a{a} {}
+        uint8_t r, g, b, a;
+    };
 
-    struct RectangleRenderComponent final : public Component {
-        struct Color {
-            uint8_t r, g, b, a;
-        };
-        RectangleRenderComponent(uint16_t w,
-                                 uint16_t h,
-                                 Color fill_color,
-                                 Color border_color)
-            : w{w}, h{h}, fill_color{fill_color}, border_color{border_color} {}
+    struct RectangleShapeComponent : public Component {
+        RectangleShapeComponent(uint16_t w, uint16_t h) : w{w}, h{h} {}
         uint16_t w, h;
-        Color fill_color;
-        Color border_color;
+    };
+
+    struct RectangleRenderComponent : public Component {
+        RectangleRenderComponent(const RectangleShapeComponent& rect,
+                                 const ColorComponent& fill_color,
+                                 const ColorComponent& border_color)
+            : rect{rect}, fill_color{fill_color}, border_color{border_color} {}
+        RectangleShapeComponent rect;
+        ColorComponent fill_color;
+        ColorComponent border_color;
+    };
+
+    struct RectangleSegmentComponent final : public Component {
+        RectangleSegmentComponent(const PositionComponent& position,
+                                  const RectangleRenderComponent& rect_render)
+            : position_component{position},
+            rectangle_render_component{rect_render} {}
+        PositionComponent position_component;
+        RectangleRenderComponent rectangle_render_component;
     };
 
     struct SnakeComponent final : public Component {
-        struct Segment final {
-            Segment(uint16_t x,
-                    uint16_t y,
-                    uint16_t w,
-                    RectangleRenderComponent::Color border_color,
-                    RectangleRenderComponent::Color fill_color)
-                : position_component{x, y},
-                  render_component{w, w, border_color, fill_color} {}
-            PositionComponent position_component;
-            RectangleRenderComponent render_component;
-        };
-        SnakeComponent(uint16_t x,
-                       uint16_t y,
-                       uint16_t w,
-                       RectangleRenderComponent::Color border_color,
-                       RectangleRenderComponent::Color fill_color,
-                       VelocityComponent::Direction direction)
-            : velocity_component{w, direction}{
-            segments.emplace_back(x, y, w, border_color, fill_color);
-        };
-        std::vector<Segment> segments;
-        VelocityComponent velocity_component;
+        std::list<RectangleSegmentComponent> segments;
     };
 }
 
