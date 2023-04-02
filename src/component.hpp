@@ -16,16 +16,10 @@ namespace snake_game {
 
     struct VelocityComponent final : public Component {
         enum class Direction : uint8_t { UP, DOWN, LEFT, RIGHT };
-        VelocityComponent(uint8_t speed, Direction direction)
+        VelocityComponent(uint16_t speed, Direction direction)
             : speed{speed}, direction{direction} {}
-        uint8_t speed;
+        uint16_t speed;
         Direction direction;
-    };
-
-    struct PlayerControlledComponent final : public Component {
-        PlayerControlledComponent(bool is_player_controlled)
-            : is_player_controlled{is_player_controlled} {}
-        bool is_player_controlled;
     };
 
     struct RectangleRenderComponent final : public Component {
@@ -40,11 +34,24 @@ namespace snake_game {
 
     struct SnakeComponent final : public Component {
         struct Segment final {
+            Segment(uint16_t x,
+                    uint16_t y,
+                    uint16_t w,
+                    RectangleRenderComponent::Color color)
+                : position_component{x, y}, render_component{w, w, color} {}
             PositionComponent position_component;
             RectangleRenderComponent render_component;
         };
+        SnakeComponent(uint16_t x,
+                       uint16_t y,
+                       uint16_t w,
+                       RectangleRenderComponent::Color color,
+                       VelocityComponent::Direction direction)
+            : velocity_component{w, direction}{
+            segments.emplace_back(x, y, w, color);
+            segments.emplace_back(x - w, y, w, color);
+        };
         std::vector<Segment> segments;
-        PlayerControlledComponent player_controlled_component {true};
         VelocityComponent velocity_component;
     };
 }

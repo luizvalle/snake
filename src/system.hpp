@@ -11,8 +11,12 @@ namespace snake_game {
         virtual void update(std::vector<Entity>& entities) = 0;
     };
 
-    struct RenderSystem final : public System {
-        virtual void update(std::vector<Entity>& entities) override;
+    class RenderSystem final : public System {
+        public:
+            virtual void update(std::vector<Entity>& entities) override;
+        private:
+            void _render_normal(Entity& entity, SDL_Renderer *renderer);
+            void _render_snake(Entity& entity, SDL_Renderer *renderer);
     };
 }
 
