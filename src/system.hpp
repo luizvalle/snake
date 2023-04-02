@@ -15,8 +15,9 @@ namespace snake_game {
         public:
             virtual void update(std::vector<Entity>& entities) override;
         private:
-            void _render_normal(Entity& entity, SDL_Renderer *renderer);
-            void _render_snake(Entity& entity, SDL_Renderer *renderer);
+            void _render_normal(const PositionComponent& position,
+                                const RectangleRenderComponent& render);
+            void _render_snake(Entity& entity);
     };
 }
 

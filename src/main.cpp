@@ -28,9 +28,10 @@ int main(void) {
 
     std::vector<Entity> entities;
     entities.emplace_back();
-    RectangleRenderComponent::Color color {255, 0, 0, 255};
+    RectangleRenderComponent::Color fill_color {0, 71, 100, 255};
+    RectangleRenderComponent::Color border_color {0, 0, 0, 255};
     VelocityComponent::Direction direction = VelocityComponent::Direction::LEFT;
-    entities.back().add_component<SnakeComponent>(200, 200, 20, color, direction);
+    entities.back().add_component<SnakeComponent>(200, 200, 20, fill_color, border_color, direction);
 
     RenderSystem render_system;
 

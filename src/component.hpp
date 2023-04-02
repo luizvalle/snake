@@ -26,10 +26,14 @@ namespace snake_game {
         struct Color {
             uint8_t r, g, b, a;
         };
-        RectangleRenderComponent(uint16_t w, uint16_t h, Color color)
-            : w{w}, h{h}, color{color} {}
+        RectangleRenderComponent(uint16_t w,
+                                 uint16_t h,
+                                 Color fill_color,
+                                 Color border_color)
+            : w{w}, h{h}, fill_color{fill_color}, border_color{border_color} {}
         uint16_t w, h;
-        Color color;
+        Color fill_color;
+        Color border_color;
     };
 
     struct SnakeComponent final : public Component {
@@ -37,19 +41,21 @@ namespace snake_game {
             Segment(uint16_t x,
                     uint16_t y,
                     uint16_t w,
-                    RectangleRenderComponent::Color color)
-                : position_component{x, y}, render_component{w, w, color} {}
+                    RectangleRenderComponent::Color border_color,
+                    RectangleRenderComponent::Color fill_color)
+                : position_component{x, y},
+                  render_component{w, w, border_color, fill_color} {}
             PositionComponent position_component;
             RectangleRenderComponent render_component;
         };
         SnakeComponent(uint16_t x,
                        uint16_t y,
                        uint16_t w,
-                       RectangleRenderComponent::Color color,
+                       RectangleRenderComponent::Color border_color,
+                       RectangleRenderComponent::Color fill_color,
                        VelocityComponent::Direction direction)
             : velocity_component{w, direction}{
-            segments.emplace_back(x, y, w, color);
-            segments.emplace_back(x - w, y, w, color);
+            segments.emplace_back(x, y, w, border_color, fill_color);
         };
         std::vector<Segment> segments;
         VelocityComponent velocity_component;
