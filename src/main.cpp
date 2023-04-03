@@ -1,9 +1,9 @@
 #include "entity.hpp"
 #include "component.hpp"
 #include "system.hpp"
-#include "renderer.hpp"
 #include "command.hpp"
 #include "input_handler.hpp"
+#include "graphics.hpp"
 #include <iostream>
 #include <vector>
 #include <SDL2/SDL.h>
@@ -11,22 +11,6 @@
 using namespace snake_game;
 
 int main(void) {
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER)) {
-        return 1;
-    }
-
-    SDL_Window *window = SDL_CreateWindow("Luiz Window",
-                                          SDL_WINDOWPOS_CENTERED,
-                                          SDL_WINDOWPOS_CENTERED,
-                                          400, 400, 0);
-
-    if (!window) {
-        SDL_Quit();
-        return 1;
-    }
-
-    Renderer& renderer = Renderer::get_instance();
-    renderer.init(window);
 
     std::vector<Entity> entities;
     entities.emplace_back();
@@ -40,7 +24,9 @@ int main(void) {
                                                                           rect_render);
     entities.back().add_component<VelocityComponent>(20, VelocityComponent::Direction::RIGHT);
 
-    RenderSystem render_system;
+    std::shared_ptr<SDLGraphics> graphics = std::make_shared<SDLGraphics>();
+    graphics->create_window("Snake", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 400, 400);
+    RenderSystem render_system {graphics};
     MovementSystem movement_system;
 
     bool game_over = false;
@@ -66,9 +52,6 @@ int main(void) {
         render_system.update(entities);
         SDL_Delay(10000/60);
     }
-
-    SDL_DestroyWindow(window);
-    SDL_Quit();
 
     return 0;
 }

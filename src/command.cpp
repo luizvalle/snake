@@ -6,7 +6,7 @@ namespace snake_game {
             VelocityComponent::Direction direction)
         : m_entity{entity}, m_new_direction{direction} {
         if (!m_entity.has_component<VelocityComponent>()) {
-            throw new std::runtime_error("Missing velocity component.");
+            throw std::runtime_error("Missing velocity component.");
         }
     }
 

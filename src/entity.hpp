@@ -19,7 +19,7 @@ namespace snake_game {
             T& get_component() {
                 T *component = _get_component<T>();
                 if (!component) {
-                    throw new std::runtime_error("Could not find component.");
+                    throw std::runtime_error("Could not find component.");
                 }
                 return *component;
             }
