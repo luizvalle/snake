@@ -1,27 +1,45 @@
+# Directories
+SDL_HEADERS_DIR = /usr/local/include -D_THREAD_SAFE
+SDL_LIB_DIR = /usr/local/lib
+BIN_DIR = ../bin
+
+# Files
+OBJS = $(BIN_DIR)/main.o $(BIN_DIR)/command.o $(BIN_DIR)/entity_manager.o $(BIN_DIR)/graphics.o $(BIN_DIR)/input_handler.o $(BIN_DIR)/main.o $(BIN_DIR)/system.o
+EXECUTABLE = $(BIN_DIR)/snake_game
+
+# Compiler and flags
 CXX=clang++
-CXXFLAGS=-I/usr/local/include -D_THREAD_SAFE -std=c++20 -O2 -fexceptions
-LDFLAGS=-L/usr/local/lib -lSDL2 -lSDL2_image
+CXXFLAGS=-I$(SDL_HEADERS_DIR) -std=c++20
+LDFLAGS=-L$(SDL_LIB_DIR) -lSDL2 -lSDL2_image
 
-snake_game: main.o graphics.o system.o command.o input_handler.o
-	$(CXX) main.o graphics.o system.o command.o input_handler.o $(LDFLAGS) -o snake_game
+# Targets
+all: clean $(EXECUTABLE)
 
-main.o: main.cpp entity.hpp component.hpp
-	$(CXX) $(CXXFLAGS) -c main.cpp
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
 
-graphics.o: graphics.cpp graphics.hpp component.hpp
-	$(CXX) $(CXXFLAGS) -c graphics.cpp
+$(EXECUTABLE): $(OBJS) | $(BIN_DIR)
+	$(CXX) $(LDFLAGS) $^ -o $@
 
-system.o: system.cpp system.hpp entity.hpp graphics.hpp
-	$(CXX) $(CXXFLAGS) -c system.cpp
+$(BIN_DIR)/command.o: command.cpp command.hpp | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-command.o: command.cpp command.hpp component.hpp
-	$(CXX) $(CXXFLAGS) -c command.cpp
+$(BIN_DIR)/entity_manager.o: entity_manager.cpp entity_manager.hpp | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-input_handler.o: input_handler.cpp input_handler.hpp command.hpp
-	$(CXX) $(CXXFLAGS) -c input_handler.cpp
+$(BIN_DIR)/graphics.o: graphics.cpp graphics.hpp | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-all: clean snake_game
+$(BIN_DIR)/input_handler.o: input_handler.cpp input_handler.hpp | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-.PHONY: clean
+$(BIN_DIR)/main.o: main.cpp | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(BIN_DIR)/system.o: system.cpp system.hpp | $(BIN_DIR)
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
 clean:
-	rm -rf *.o snake_game
+	rm -f $(BIN_DIR)/*
+
+.PHONY: all clean

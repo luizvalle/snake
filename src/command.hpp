@@ -1,34 +1,36 @@
 #ifndef __COMMAND_HPP__
 #define __COMMAND_HPP__
 
-#include "entity.hpp"
 #include "component.hpp"
+#include "entity.hpp"
 
 namespace snake_game {
-    struct Command {
-        virtual ~Command() {};
-        virtual void execute() = 0;
-    };
+struct Command {
+  virtual ~Command() {};
+  virtual void execute() = 0;
+};
 
-    class QuitCommand final : public Command {
-        public:
-            QuitCommand(bool& game_over) : game_over{game_over} {}
-            ~QuitCommand() = default;
-            virtual void execute() override { game_over = true; };
-        private:
-            bool& game_over;
-    };
+class QuitCommand final : public Command {
+ public:
+  QuitCommand(bool& quit) : quit{quit} {}
+  ~QuitCommand() = default;
+  virtual void execute() override { quit = true; };
 
-    class ChangeDirectionCommand final : public Command {
-        public:
-            ChangeDirectionCommand(Entity& entity,
-                                   VelocityComponent::Direction direction);
-            ~ChangeDirectionCommand() = default;
-            virtual void execute() override;
-        protected:
-            Entity& m_entity;
-            VelocityComponent::Direction m_new_direction;
-    };
-}
+ private:
+  bool& quit;
+};
+
+class ChangeDirectionCommand final : public Command {
+ public:
+  ChangeDirectionCommand(Entity& entity,
+                         VelocityComponent::Direction direction);
+  ~ChangeDirectionCommand() = default;
+  virtual void execute() override;
+
+ protected:
+  Entity& m_entity;
+  VelocityComponent::Direction m_new_direction;
+};
+}  // namespace snake_game
 
 #endif

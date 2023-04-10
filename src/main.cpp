@@ -1,57 +1,51 @@
-#include "entity.hpp"
-#include "component.hpp"
-#include "system.hpp"
-#include "command.hpp"
-#include "input_handler.hpp"
-#include "graphics.hpp"
+#include <SDL2/SDL.h>
+
 #include <iostream>
 #include <vector>
-#include <SDL2/SDL.h>
+
+#include "command.hpp"
+#include "component.hpp"
+#include "entity.hpp"
+#include "entity_manager.hpp"
+#include "graphics.hpp"
+#include "input_handler.hpp"
+#include "system.hpp"
 
 using namespace snake_game;
 
 int main(void) {
+  EntityManager entity_manager;
+  auto& snake = entity_manager.create_entity(EntityManager::EntityType::SNAKE,
+                                             100, 100, 20);
 
-    std::vector<Entity> entities;
-    entities.emplace_back();
-    entities.back().add_component<SnakeComponent>();
-    PositionComponent position {100, 100};
-    ColorComponent fill_color {0, 71, 100, 255};
-    ColorComponent border_color {0, 0, 0, 255};
-    RectangleShapeComponent rect {20, 20};
-    RectangleRenderComponent rect_render {rect, fill_color, border_color};
-    entities.back().get_component<SnakeComponent>().segments.emplace_back(position,
-                                                                          rect_render);
-    entities.back().add_component<VelocityComponent>(20, VelocityComponent::Direction::RIGHT);
+  std::shared_ptr<SDLGraphics> graphics = std::make_shared<SDLGraphics>();
+  graphics->create_window("Snake", 400, 400);
+  RenderSystem render_system{graphics};
+  MovementSystem movement_system;
 
-    std::shared_ptr<SDLGraphics> graphics = std::make_shared<SDLGraphics>();
-    graphics->create_window("Snake", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 400, 400);
-    RenderSystem render_system {graphics};
-    MovementSystem movement_system;
+  bool game_over = false;
 
-    bool game_over = false;
+  InputHandler input_handler;
+  input_handler.set_quit_command(std::make_unique<QuitCommand>(game_over));
+  input_handler.bind_command(SDL_Scancode::SDL_SCANCODE_UP,
+                             std::make_unique<ChangeDirectionCommand>(
+                                 snake, VelocityComponent::Direction::UP));
+  input_handler.bind_command(SDL_Scancode::SDL_SCANCODE_DOWN,
+                             std::make_unique<ChangeDirectionCommand>(
+                                 snake, VelocityComponent::Direction::DOWN));
+  input_handler.bind_command(SDL_Scancode::SDL_SCANCODE_LEFT,
+                             std::make_unique<ChangeDirectionCommand>(
+                                 snake, VelocityComponent::Direction::LEFT));
+  input_handler.bind_command(SDL_Scancode::SDL_SCANCODE_RIGHT,
+                             std::make_unique<ChangeDirectionCommand>(
+                                 snake, VelocityComponent::Direction::RIGHT));
 
-    InputHandler input_handler;
-    input_handler.set_quit_command(std::make_unique<QuitCommand>(game_over));
-    input_handler.bind_command(SDL_Scancode::SDL_SCANCODE_UP,
-                               std::make_unique<ChangeDirectionCommand>(entities.back(), 
-                                   VelocityComponent::Direction::UP));
-    input_handler.bind_command(SDL_Scancode::SDL_SCANCODE_DOWN,
-                               std::make_unique<ChangeDirectionCommand>(entities.back(), 
-                                   VelocityComponent::Direction::DOWN));
-    input_handler.bind_command(SDL_Scancode::SDL_SCANCODE_LEFT,
-                               std::make_unique<ChangeDirectionCommand>(entities.back(), 
-                                   VelocityComponent::Direction::LEFT));
-    input_handler.bind_command(SDL_Scancode::SDL_SCANCODE_RIGHT,
-                               std::make_unique<ChangeDirectionCommand>(entities.back(), 
-                                   VelocityComponent::Direction::RIGHT));
+  while (!game_over) {
+    input_handler.handle_input();
+    movement_system.update(entity_manager);
+    render_system.update(entity_manager);
+    SDL_Delay(10000 / 60);
+  }
 
-    while (!game_over) {
-        input_handler.handle_input();
-        movement_system.update(entities);
-        render_system.update(entities);
-        SDL_Delay(10000/60);
-    }
-
-    return 0;
+  return 0;
 }
