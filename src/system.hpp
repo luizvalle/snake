@@ -10,6 +10,7 @@
 
 namespace snake_game {
 struct System {
+  virtual ~System() {}
   virtual void update(EntityManager& entity_manager) = 0;
 };
 

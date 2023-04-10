@@ -27,7 +27,7 @@ class ChangeDirectionCommand final : public Command {
   ~ChangeDirectionCommand() = default;
   virtual void execute() override;
 
- protected:
+ private:
   Entity& m_entity;
   VelocityComponent::Direction m_new_direction;
 };

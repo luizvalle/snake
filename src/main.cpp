@@ -1,51 +1,27 @@
 #include <SDL2/SDL.h>
 
-#include <iostream>
+#include <memory>
 #include <vector>
 
-#include "command.hpp"
-#include "component.hpp"
-#include "entity.hpp"
 #include "entity_manager.hpp"
 #include "graphics.hpp"
 #include "input_handler.hpp"
 #include "system.hpp"
+#include "game.hpp"
 
 using namespace snake_game;
 
 int main(void) {
-  EntityManager entity_manager;
-  auto& snake = entity_manager.create_entity(EntityManager::EntityType::SNAKE,
-                                             100, 100, 20);
+  auto entity_manager = std::make_unique<EntityManager>();
+  auto graphics = std::make_shared<SDLGraphics>();
+  auto render_system = std::make_unique<RenderSystem>(graphics);
+  auto movement_system = std::make_unique<MovementSystem>();
+  auto input_handler = std::make_unique<InputHandler>();
 
-  std::shared_ptr<SDLGraphics> graphics = std::make_shared<SDLGraphics>();
-  graphics->create_window("Snake", 400, 400);
-  RenderSystem render_system{graphics};
-  MovementSystem movement_system;
-
-  bool game_over = false;
-
-  InputHandler input_handler;
-  input_handler.set_quit_command(std::make_unique<QuitCommand>(game_over));
-  input_handler.bind_command(SDL_Scancode::SDL_SCANCODE_UP,
-                             std::make_unique<ChangeDirectionCommand>(
-                                 snake, VelocityComponent::Direction::UP));
-  input_handler.bind_command(SDL_Scancode::SDL_SCANCODE_DOWN,
-                             std::make_unique<ChangeDirectionCommand>(
-                                 snake, VelocityComponent::Direction::DOWN));
-  input_handler.bind_command(SDL_Scancode::SDL_SCANCODE_LEFT,
-                             std::make_unique<ChangeDirectionCommand>(
-                                 snake, VelocityComponent::Direction::LEFT));
-  input_handler.bind_command(SDL_Scancode::SDL_SCANCODE_RIGHT,
-                             std::make_unique<ChangeDirectionCommand>(
-                                 snake, VelocityComponent::Direction::RIGHT));
-
-  while (!game_over) {
-    input_handler.handle_input();
-    movement_system.update(entity_manager);
-    render_system.update(entity_manager);
-    SDL_Delay(10000 / 60);
-  }
+  Game game{graphics, std::move(entity_manager), std::move(input_handler)};
+  game.add_system(std::move(render_system));
+  game.add_system(std::move(movement_system));
+  game.start();
 
   return 0;
 }
