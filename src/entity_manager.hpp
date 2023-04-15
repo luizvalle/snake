@@ -21,25 +21,25 @@ class EntityManager {
     using iterator_category = std::forward_iterator_tag;
     using difference_type = std::ptrdiff_t;
 
-    EntityManagerIterator(EntityManager::EntityMap::iterator it) : m_it{it} {}
+    EntityManagerIterator(EntityManager::EntityMap::iterator it) : it_{it} {}
 
-    reference operator*() const { return *(m_it->second); }
+    reference operator*() const { return *(it_->second); }
 
-    pointer operator->() const { return m_it->second.get(); }
+    pointer operator->() const { return it_->second.get(); }
 
     EntityManagerIterator& operator++() {
-      ++m_it;
+      ++it_;
       return *this;
     }
 
     EntityManagerIterator operator++(int) {
       EntityManagerIterator temp{*this};
-      ++m_it;
+      ++it_;
       return temp;
     }
 
     bool operator==(const EntityManagerIterator& other) const {
-      return m_it == other.m_it;
+      return it_ == other.it_;
     }
 
     bool operator!=(const EntityManagerIterator& other) const {
@@ -47,31 +47,29 @@ class EntityManager {
     }
 
    private:
-    EntityManager::EntityMap::iterator m_it;
+    EntityManager::EntityMap::iterator it_;
   };
 
   Entity& create_entity(EntityType type, int16_t x, int16_t y, uint16_t size);
 
   void remove_entity(size_t enity_id) {
-    auto iter = m_entities.find(enity_id);
-    if (iter != m_entities.end()) {
-      m_entities.erase(iter);
+    auto iter = entities_.find(enity_id);
+    if (iter != entities_.end()) {
+      entities_.erase(iter);
     }
   }
 
   EntityManagerIterator begin() {
-    return EntityManagerIterator(m_entities.begin());
+    return EntityManagerIterator(entities_.begin());
   }
 
-  EntityManagerIterator end() {
-    return EntityManagerIterator(m_entities.end());
-  }
+  EntityManagerIterator end() { return EntityManagerIterator(entities_.end()); }
 
  private:
   Entity* _create_snake(size_t id, int16_t x, int16_t y, uint16_t size);
   Entity* _create_apple(size_t id, int16_t x, int16_t y, uint16_t size);
-  EntityMap m_entities;
-  size_t m_next_id = 0;
+  EntityMap entities_;
+  size_t next_id_ = 0;
 };
 }  // namespace snake_game
 

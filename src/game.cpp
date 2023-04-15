@@ -35,7 +35,7 @@ void Game::start() {
     for (auto& system : systems_) {
       system->update(*entity_manager_);
     }
-    SDL_Delay(10000 / 60);
+    SDL_Delay(5000 / 60);
   }
 }
 }  // namespace snake_game

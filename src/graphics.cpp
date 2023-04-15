@@ -6,7 +6,7 @@
 #include <string>
 
 namespace snake_game {
-SDLGraphics::SDLGraphics() : m_window{nullptr}, m_renderer{nullptr} {
+SDLGraphics::SDLGraphics() : window_{nullptr}, renderer_{nullptr} {
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER)) {
     std::string error_message =
         std::string("Error initializing SDL: ") + std::string(SDL_GetError());
@@ -21,17 +21,17 @@ SDLGraphics::~SDLGraphics() {
 
 void SDLGraphics::create_window(const char* title, unsigned int w,
                                 unsigned int h) {
-  m_window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
+  window_ = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
                               SDL_WINDOWPOS_UNDEFINED, w, h, 0);
-  if (!m_window) {
+  if (!window_) {
     std::string error_message =
         std::string("Error creating window: ") + std::string(SDL_GetError());
     throw std::runtime_error(error_message);
   }
 
   uint32_t flags = SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC;
-  m_renderer = SDL_CreateRenderer(m_window, -1, flags);
-  if (!m_renderer) {
+  renderer_ = SDL_CreateRenderer(window_, -1, flags);
+  if (!renderer_) {
     std::string error_message =
         std::string("Error creating renderer: ") + std::string(SDL_GetError());
     throw std::runtime_error(error_message);
@@ -39,29 +39,29 @@ void SDLGraphics::create_window(const char* title, unsigned int w,
 }
 
 void SDLGraphics::destroy_window() {
-  if (m_renderer) {
-    SDL_DestroyRenderer(m_renderer);
-    m_renderer = nullptr;
+  if (renderer_) {
+    SDL_DestroyRenderer(renderer_);
+    renderer_ = nullptr;
   }
-  if (m_window) {
-    SDL_DestroyWindow(m_window);
-    m_window = nullptr;
+  if (window_) {
+    SDL_DestroyWindow(window_);
+    window_ = nullptr;
   }
 }
 
 void SDLGraphics::draw_rectangle(const PositionComponent& position,
                                  const RectangleRenderComponent& render) {
-  if (!m_renderer) {
+  if (!renderer_) {
     throw std::runtime_error("Render not initialized.");
   }
   SDL_Rect rect{position.x, position.y, render.rect.w, render.rect.h};
-  SDL_SetRenderDrawColor(m_renderer, render.fill_color.r, render.fill_color.g,
+  SDL_SetRenderDrawColor(renderer_, render.fill_color.r, render.fill_color.g,
                          render.fill_color.b, render.fill_color.a);
-  SDL_RenderFillRect(m_renderer, &rect);
-  SDL_SetRenderDrawColor(m_renderer, render.border_color.r,
+  SDL_RenderFillRect(renderer_, &rect);
+  SDL_SetRenderDrawColor(renderer_, render.border_color.r,
                          render.border_color.g, render.border_color.b,
                          render.border_color.a);
-  SDL_RenderDrawRect(m_renderer, &rect);
-  SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+  SDL_RenderDrawRect(renderer_, &rect);
+  SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
 }
 }  // namespace snake_game

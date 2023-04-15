@@ -24,14 +24,14 @@ class SDLGraphics final : public Graphics {
   virtual void create_window(const char* title, unsigned int w,
                              unsigned int h) override;
   virtual void destroy_window() override;
-  virtual void clear() override { SDL_RenderClear(m_renderer); }
+  virtual void clear() override { SDL_RenderClear(renderer_); }
   virtual void draw_rectangle(const PositionComponent& position,
                               const RectangleRenderComponent& render) override;
-  virtual void present() override { SDL_RenderPresent(m_renderer); }
+  virtual void present() override { SDL_RenderPresent(renderer_); }
 
  private:
-  SDL_Window* m_window;
-  SDL_Renderer* m_renderer;
+  SDL_Window* window_;
+  SDL_Renderer* renderer_;
 };
 }  // namespace snake_game
 

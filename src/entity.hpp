@@ -11,7 +11,7 @@
 namespace snake_game {
 class Entity {
  public:
-  Entity(size_t id) : m_id{id} {}
+  Entity(size_t id) : id_{id} {}
   template <typename T>
   bool has_component() const {
     T* component = _get_component<T>();
@@ -30,14 +30,14 @@ class Entity {
   template <typename T, typename... TArgs>
   T& add_component(TArgs&&... args) {
     T* component = new T(std::forward<TArgs>(args)...);
-    m_components.emplace_back(component);
+    components_.emplace_back(component);
     return *component;
   }
 
  private:
   template <typename T>
   T* _get_component() const {
-    for (auto& component : m_components) {
+    for (auto& component : components_) {
       T* component_ptr = dynamic_cast<T*>(component.get());
       if (component_ptr) {
         return component_ptr;
@@ -45,8 +45,8 @@ class Entity {
     }
     return nullptr;
   }
-  std::vector<std::unique_ptr<Component>> m_components;
-  size_t m_id;
+  std::vector<std::unique_ptr<Component>> components_;
+  size_t id_;
 };
 }  // namespace snake_game
 

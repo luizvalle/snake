@@ -6,7 +6,7 @@ namespace snake_game {
 Entity &EntityManager::create_entity(EntityManager::EntityType type, int16_t x,
                                      int16_t y, uint16_t size) {
   Entity *entity_ptr;
-  size_t id = m_next_id++;
+  size_t id = next_id_++;
   switch (type) {
     case EntityManager::EntityType::SNAKE:
       entity_ptr = _create_snake(id, x, y, size);
@@ -15,7 +15,7 @@ Entity &EntityManager::create_entity(EntityManager::EntityType type, int16_t x,
       entity_ptr = _create_apple(id, x, y, size);
       break;
   }
-  m_entities.emplace(id, entity_ptr);
+  entities_.emplace(id, entity_ptr);
   return *entity_ptr;
 }
 

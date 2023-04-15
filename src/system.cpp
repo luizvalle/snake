@@ -4,18 +4,18 @@
 
 namespace snake_game {
 void RenderSystem::update(EntityManager& entity_manager) {
-  m_graphics->clear();
+  graphics_->clear();
   for (auto& entity : entity_manager) {
     if (entity.has_component<PositionComponent>() &&
         entity.has_component<RectangleRenderComponent>()) {
       const auto& position = entity.get_component<PositionComponent>();
       const auto& render = entity.get_component<RectangleRenderComponent>();
-      m_graphics->draw_rectangle(position, render);
+      graphics_->draw_rectangle(position, render);
     } else if (entity.has_component<SnakeComponent>()) {
       _render_snake(entity);
     }
   }
-  m_graphics->present();
+  graphics_->present();
 }
 
 void RenderSystem::_render_snake(Entity& entity) {
@@ -23,7 +23,7 @@ void RenderSystem::_render_snake(Entity& entity) {
   for (const auto& segment : snake_component.segments) {
     const auto& position = segment.position_component;
     const auto& render = segment.rectangle_render_component;
-    m_graphics->draw_rectangle(position, render);
+    graphics_->draw_rectangle(position, render);
   }
 }
 

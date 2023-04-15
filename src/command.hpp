@@ -6,18 +6,18 @@
 
 namespace snake_game {
 struct Command {
-  virtual ~Command() {};
+  virtual ~Command(){};
   virtual void execute() = 0;
 };
 
 class QuitCommand final : public Command {
  public:
-  QuitCommand(bool& quit) : quit{quit} {}
+  QuitCommand(bool& quit) : quit_{quit} {}
   ~QuitCommand() = default;
-  virtual void execute() override { quit = true; };
+  virtual void execute() override { quit_ = true; };
 
  private:
-  bool& quit;
+  bool& quit_;
 };
 
 class ChangeDirectionCommand final : public Command {
@@ -28,8 +28,8 @@ class ChangeDirectionCommand final : public Command {
   virtual void execute() override;
 
  private:
-  Entity& m_entity;
-  VelocityComponent::Direction m_new_direction;
+  Entity& entity_;
+  VelocityComponent::Direction new_direction_;
 };
 }  // namespace snake_game
 

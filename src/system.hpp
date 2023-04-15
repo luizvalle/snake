@@ -16,14 +16,14 @@ struct System {
 
 class RenderSystem final : public System {
  public:
-  RenderSystem(std::shared_ptr<Graphics> graphics) : m_graphics{graphics} {}
+  RenderSystem(std::shared_ptr<Graphics> graphics) : graphics_{graphics} {}
   virtual void update(EntityManager& entity_manager) override;
 
  private:
   void _render_normal(const PositionComponent& position,
                       const RectangleRenderComponent& render);
   void _render_snake(Entity& entity);
-  std::shared_ptr<Graphics> m_graphics;
+  std::shared_ptr<Graphics> graphics_;
 };
 
 class MovementSystem : public System {
