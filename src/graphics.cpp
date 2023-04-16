@@ -6,7 +6,8 @@
 #include <string>
 
 namespace snake_game {
-SDLGraphics::SDLGraphics() : window_{nullptr}, renderer_{nullptr} {
+SDLGraphics::SDLGraphics()
+: window_{nullptr}, renderer_{nullptr}, grid_{nullptr} {
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER)) {
     std::string error_message =
         std::string("Error initializing SDL: ") + std::string(SDL_GetError());
@@ -50,11 +51,13 @@ void SDLGraphics::destroy_window() {
 }
 
 void SDLGraphics::draw_rectangle(const PositionComponent& position,
-                                 const RectangleRenderComponent& render) {
+                                 const GridCellRenderComponent& render) {
   if (!renderer_) {
     throw std::runtime_error("Render not initialized.");
   }
-  SDL_Rect rect{position.x, position.y, render.rect.w, render.rect.h};
+  int x = grid_->position_to_pixel(position.x);
+  int y = grid_->position_to_pixel(position.y);
+  SDL_Rect rect{x, y, grid_->cell_size(), grid_->cell_size()};
   SDL_SetRenderDrawColor(renderer_, render.fill_color.r, render.fill_color.g,
                          render.fill_color.b, render.fill_color.a);
   SDL_RenderFillRect(renderer_, &rect);

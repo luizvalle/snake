@@ -11,9 +11,8 @@ Game::Game(std::shared_ptr<Graphics> graphics,
     : graphics_{graphics},
       entity_manager_{std::move(entity_manager)},
       input_handler_{std::move(input_handler)} {
-  graphics_->create_window("Snake", 800, 800);
   auto& snake = entity_manager_->create_entity(EntityManager::EntityType::SNAKE,
-                                               100, 100, 20);
+                                               5, 5);
   input_handler_->set_quit_command(std::make_unique<QuitCommand>(game_over_));
   input_handler_->bind_command(SDL_Scancode::SDL_SCANCODE_UP,
                                std::make_unique<ChangeDirectionCommand>(

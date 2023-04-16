@@ -7,9 +7,9 @@ void RenderSystem::update(EntityManager& entity_manager) {
   graphics_->clear();
   for (auto& entity : entity_manager) {
     if (entity.has_component<PositionComponent>() &&
-        entity.has_component<RectangleRenderComponent>()) {
+        entity.has_component<GridCellRenderComponent>()) {
       const auto& position = entity.get_component<PositionComponent>();
-      const auto& render = entity.get_component<RectangleRenderComponent>();
+      const auto& render = entity.get_component<GridCellRenderComponent>();
       graphics_->draw_rectangle(position, render);
     } else if (entity.has_component<SnakeComponent>()) {
       _render_snake(entity);
@@ -42,18 +42,19 @@ void MovementSystem::_move_snake(Entity& entity) {
   const auto& head = segments.front();
   int16_t new_x = head.position_component.x;
   int16_t new_y = head.position_component.y;
+  uint16_t speed = velocity_component.speed;
   switch (velocity_component.direction) {
     case VelocityComponent::Direction::UP:
-      new_y -= velocity_component.speed;
+      new_y -= speed;
       break;
     case VelocityComponent::Direction::DOWN:
-      new_y += velocity_component.speed;
+      new_y += speed;
       break;
     case VelocityComponent::Direction::LEFT:
-      new_x -= velocity_component.speed;
+      new_x -= speed;
       break;
     case VelocityComponent::Direction::RIGHT:
-      new_x += velocity_component.speed;
+      new_x += speed;
       break;
   }
   auto& tail = segments.back();

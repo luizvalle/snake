@@ -7,6 +7,7 @@
 #include "entity.hpp"
 #include "entity_manager.hpp"
 #include "graphics.hpp"
+#include "grid.hpp"
 
 namespace snake_game {
 struct System {
@@ -21,17 +22,19 @@ class RenderSystem final : public System {
 
  private:
   void _render_normal(const PositionComponent& position,
-                      const RectangleRenderComponent& render);
+                      const GridCellRenderComponent& render);
   void _render_snake(Entity& entity);
   std::shared_ptr<Graphics> graphics_;
 };
 
 class MovementSystem : public System {
  public:
+  MovementSystem(std::shared_ptr<Grid> grid) : grid_{grid} {}
   virtual void update(EntityManager& entity_manager) override;
 
  private:
   void _move_snake(Entity& entity);
+  std::shared_ptr<Grid> grid_;
 };
 }  // namespace snake_game
 

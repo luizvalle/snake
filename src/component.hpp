@@ -10,8 +10,8 @@ struct Component {
 };
 
 struct PositionComponent final : public Component {
-  PositionComponent(int16_t x, int16_t y) : x{x}, y{y} {}
-  int16_t x, y;
+  PositionComponent(int32_t x, int32_t y) : x{x}, y{y} {}
+  int32_t x, y;
 };
 
 struct VelocityComponent final : public Component {
@@ -28,27 +28,20 @@ struct ColorComponent : public Component {
   uint8_t r, g, b, a;
 };
 
-struct RectangleShapeComponent : public Component {
-  RectangleShapeComponent(uint16_t w, uint16_t h) : w{w}, h{h} {}
-  uint16_t w, h;
-};
-
-struct RectangleRenderComponent : public Component {
-  RectangleRenderComponent(const RectangleShapeComponent& rect,
-                           const ColorComponent& fill_color,
+struct GridCellRenderComponent : public Component {
+  GridCellRenderComponent(const ColorComponent& fill_color,
                            const ColorComponent& border_color)
-      : rect{rect}, fill_color{fill_color}, border_color{border_color} {}
-  RectangleShapeComponent rect;
+      : fill_color{fill_color}, border_color{border_color} {}
   ColorComponent fill_color;
   ColorComponent border_color;
 };
 
 struct RectangleSegmentComponent final : public Component {
   RectangleSegmentComponent(const PositionComponent& position,
-                            const RectangleRenderComponent& rect_render)
+                            const GridCellRenderComponent& rect_render)
       : position_component{position}, rectangle_render_component{rect_render} {}
   PositionComponent position_component;
-  RectangleRenderComponent rectangle_render_component;
+  GridCellRenderComponent rectangle_render_component;
 };
 
 struct SnakeComponent final : public Component {

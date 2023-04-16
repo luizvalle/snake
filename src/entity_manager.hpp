@@ -50,7 +50,7 @@ class EntityManager {
     EntityManager::EntityMap::iterator it_;
   };
 
-  Entity& create_entity(EntityType type, int16_t x, int16_t y, uint16_t size);
+  Entity& create_entity(EntityType type, int16_t x, int16_t y);
 
   void remove_entity(size_t enity_id) {
     auto iter = entities_.find(enity_id);
@@ -66,8 +66,8 @@ class EntityManager {
   EntityManagerIterator end() { return EntityManagerIterator(entities_.end()); }
 
  private:
-  Entity* _create_snake(size_t id, int16_t x, int16_t y, uint16_t size);
-  Entity* _create_apple(size_t id, int16_t x, int16_t y, uint16_t size);
+  Entity* _create_snake(size_t id, int16_t x, int16_t y);
+  Entity* _create_apple(size_t id, int16_t x, int16_t y);
   EntityMap entities_;
   size_t next_id_ = 0;
 };
