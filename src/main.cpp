@@ -22,13 +22,14 @@ int main(void) {
   auto graphics = std::make_shared<SDLGraphics>();
   graphics->create_window(kGameName, kWindowWidth, kWindowHeight);
 
-  auto grid = std::make_shared<Grid>(kCellSize);
+  auto grid = std::make_shared<Grid>(kCellSize, kWindowWidth / kCellSize,
+  kWindowHeight / kCellSize);
   graphics->add_grid(grid);
 
   auto render_system = std::make_unique<RenderSystem>(graphics);
   auto movement_system = std::make_unique<MovementSystem>(grid);
 
-  auto entity_manager = std::make_unique<EntityManager>();
+  auto entity_manager = std::make_unique<EntityManager>(grid);
   auto input_handler = std::make_unique<InputHandler>();
 
   Game game{graphics, std::move(entity_manager), std::move(input_handler)};

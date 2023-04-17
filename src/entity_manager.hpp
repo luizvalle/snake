@@ -5,8 +5,11 @@
 #include <cstdint>
 #include <memory>
 #include <unordered_map>
+#include <utility>
+#include <random>
 
 #include "entity.hpp"
+#include "grid.hpp"
 
 namespace snake_game {
 class EntityManager {
@@ -49,8 +52,9 @@ class EntityManager {
    private:
     EntityManager::EntityMap::iterator it_;
   };
-
-  Entity& create_entity(EntityType type, int16_t x, int16_t y);
+  EntityManager(std::shared_ptr<Grid> grid) : grid_{grid} {}
+  Entity& create_snake(int16_t x, int16_t y);
+  Entity& create_apple();
 
   void remove_entity(size_t enity_id) {
     auto iter = entities_.find(enity_id);
@@ -66,8 +70,9 @@ class EntityManager {
   EntityManagerIterator end() { return EntityManagerIterator(entities_.end()); }
 
  private:
-  Entity* _create_snake(size_t id, int16_t x, int16_t y);
-  Entity* _create_apple(size_t id, int16_t x, int16_t y);
+  std::pair<int32_t, int32_t> _get_random_empty_position();
+  std::shared_ptr<Grid> grid_;
+  std::mt19937 random_number_generator_{std::random_device{}()};
   EntityMap entities_;
   size_t next_id_ = 0;
 };
