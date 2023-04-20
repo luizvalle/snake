@@ -61,4 +61,19 @@ std::pair<int32_t, int32_t> EntityManager::_get_random_empty_position() {
       0, free_positions.size()}(random_number_generator_);
   return free_positions[i];
 }
+
+void EntityManager::add_segment_to_snake(size_t entity_id) {
+    auto& snake = get_entity(entity_id);
+    if (!snake.has_component<SnakeComponent>()) {
+      throw std::runtime_error("Not a snake.");
+    }
+    auto& segments = snake.get_component<SnakeComponent>().segments;
+    auto& tail = segments.back();
+
+    PositionComponent position = tail.position_component;
+    ColorComponent fill_color{0, 71, 100, 255};
+    ColorComponent border_color{0, 0, 0, 255};
+    GridCellRenderComponent rect_render{fill_color, border_color};
+    segments.emplace_back(position, rect_render);
+}
 }  // namespace snake_game

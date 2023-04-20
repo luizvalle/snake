@@ -1,6 +1,7 @@
 #include "system.hpp"
 
-#include <stdexcept>
+#include <cstddef>
+#include <vector>
 
 namespace snake_game {
 void RenderSystem::update(EntityManager& entity_manager) {
@@ -61,5 +62,31 @@ void MovementSystem::_move_snake(Entity& entity) {
   tail.position_component.x = new_x;
   tail.position_component.y = new_y;
   segments.splice(segments.begin(), segments, --segments.end());
+}
+
+void CollisionSystem::update(EntityManager& entity_manager) {
+  std::vector<size_t> snake_ids, apple_ids;
+  for (auto& entity : entity_manager) {
+    size_t id = entity.id();
+    if (entity.has_component<SnakeComponent>()) {
+      snake_ids.push_back(id);
+    } else {
+      apple_ids.push_back(id);
+    }
+  }
+  for (auto snake_id : snake_ids) {
+    auto& snake_entity = entity_manager.get_entity(snake_id);
+    auto& head_position =
+    snake_entity.get_component<SnakeComponent>().segments.front().position_component;
+    for (auto apple_id : apple_ids) {
+      auto& apple_entity = entity_manager.get_entity(apple_id);
+      auto& apple_position = apple_entity.get_component<PositionComponent>();
+      if (head_position == apple_position) {
+        entity_manager.add_segment_to_snake(snake_id);
+        entity_manager.create_apple();
+        entity_manager.remove_entity(apple_id);
+      }
+    }
+  }
 }
 }  // namespace snake_game

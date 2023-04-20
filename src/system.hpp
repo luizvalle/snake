@@ -36,6 +36,11 @@ class MovementSystem : public System {
   void _move_snake(Entity& entity);
   std::shared_ptr<Grid> grid_;
 };
+
+class CollisionSystem : public System {
+ public:
+  virtual void update(EntityManager& entity_manager) override;
+};
 }  // namespace snake_game
 
 #endif

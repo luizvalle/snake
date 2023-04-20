@@ -34,6 +34,8 @@ class Entity {
     return *component;
   }
 
+  size_t id() const { return id_; }
+
  private:
   template <typename T>
   T* _get_component() const {

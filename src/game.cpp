@@ -28,12 +28,12 @@ Game::Game(std::shared_ptr<Graphics> graphics,
 }
 
 void Game::start() {
+  entity_manager_->create_apple();
   while (!game_over_) {
     input_handler_->handle_input();
     for (auto& system : systems_) {
       system->update(*entity_manager_);
     }
-    entity_manager_->create_apple();
     SDL_Delay(5000 / 60);
   }
 }

@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <utility>
 #include <random>
+#include <stdexcept>
 
 #include "entity.hpp"
 #include "grid.hpp"
@@ -15,7 +16,6 @@ namespace snake_game {
 class EntityManager {
  public:
   using EntityMap = std::unordered_map<size_t, std::unique_ptr<Entity>>;
-  enum EntityType { SNAKE, APPLE };
   class EntityManagerIterator {
    public:
     using value_type = Entity;
@@ -56,12 +56,22 @@ class EntityManager {
   Entity& create_snake(int16_t x, int16_t y);
   Entity& create_apple();
 
-  void remove_entity(size_t enity_id) {
-    auto iter = entities_.find(enity_id);
+  Entity& get_entity(size_t entity_id) {
+    auto iter = entities_.find(entity_id);
+    if (iter != entities_.end()) {
+      return *(iter->second);
+    }
+    throw std::runtime_error("An entity with the given id does not exist.");
+  }
+
+  void remove_entity(size_t entity_id) {
+    auto iter = entities_.find(entity_id);
     if (iter != entities_.end()) {
       entities_.erase(iter);
     }
   }
+
+  void add_segment_to_snake(size_t entity_id);
 
   EntityManagerIterator begin() {
     return EntityManagerIterator(entities_.begin());

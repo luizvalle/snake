@@ -11,6 +11,9 @@ struct Component {
 
 struct PositionComponent final : public Component {
   PositionComponent(int32_t x, int32_t y) : x{x}, y{y} {}
+  bool operator==(const PositionComponent& other) const {
+    return (x == other.x) && (y == other.y);
+  }
   int32_t x, y;
 };
 
@@ -36,8 +39,8 @@ struct GridCellRenderComponent : public Component {
   ColorComponent border_color;
 };
 
-struct RectangleSegmentComponent final : public Component {
-  RectangleSegmentComponent(const PositionComponent& position,
+struct SegmentComponent final : public Component {
+  SegmentComponent(const PositionComponent& position,
                             const GridCellRenderComponent& rect_render)
       : position_component{position}, rectangle_render_component{rect_render} {}
   PositionComponent position_component;
@@ -45,7 +48,7 @@ struct RectangleSegmentComponent final : public Component {
 };
 
 struct SnakeComponent final : public Component {
-  std::list<RectangleSegmentComponent> segments;
+  std::list<SegmentComponent> segments;
 };
 }  // namespace snake_game
 
