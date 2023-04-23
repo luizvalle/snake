@@ -5,6 +5,7 @@
 #include <memory>
 #include <stdexcept>
 #include <vector>
+#include <typeinfo>
 
 #include "component.hpp"
 
