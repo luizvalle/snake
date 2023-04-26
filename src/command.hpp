@@ -13,7 +13,6 @@ struct Command {
 class QuitCommand final : public Command {
  public:
   QuitCommand(bool& quit) : quit_{quit} {}
-  ~QuitCommand() = default;
   virtual void execute() override { quit_ = true; };
 
  private:
@@ -24,7 +23,6 @@ class ChangeDirectionCommand final : public Command {
  public:
   ChangeDirectionCommand(Entity& entity,
                          VelocityComponent::Direction direction);
-  ~ChangeDirectionCommand() = default;
   virtual void execute() override;
 
  private:

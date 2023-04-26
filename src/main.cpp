@@ -34,8 +34,8 @@ int main(void) {
   auto input_handler = std::make_unique<InputHandler>();
 
   Game game{graphics, std::move(entity_manager), std::move(input_handler)};
-  game.add_system(std::move(render_system));
   game.add_system(std::move(movement_system));
+  game.add_system(std::move(render_system));
   game.add_system(std::move(collision_system));
   game.start();
 
