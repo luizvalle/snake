@@ -10,37 +10,37 @@
 #include "grid.hpp"
 
 namespace snake_game {
-struct System {
-  virtual ~System() {}
-  virtual void update(EntityManager& entity_manager) = 0;
-};
+    struct System {
+        virtual ~System() {}
+        virtual void update(EntityManager &entity_manager) = 0;
+    };
 
-class RenderSystem final : public System {
- public:
-  RenderSystem(std::shared_ptr<Graphics> graphics) : graphics_{graphics} {}
-  virtual void update(EntityManager& entity_manager) override;
+    class RenderSystem final : public System {
+    public:
+        RenderSystem(std::shared_ptr<Graphics> graphics) : graphics_{graphics} {}
+        virtual void update(EntityManager &entity_manager) override;
 
- private:
-  void _render_normal(const PositionComponent& position,
-                      const GridCellRenderComponent& render);
-  void _render_snake(Entity& entity);
-  std::shared_ptr<Graphics> graphics_;
-};
+    private:
+        void _render_normal(const PositionComponent &position,
+                            const GridCellRenderComponent &render);
+        void _render_snake(Entity &entity);
+        std::shared_ptr<Graphics> graphics_;
+    };
 
-class MovementSystem : public System {
- public:
-  MovementSystem(std::shared_ptr<Grid> grid) : grid_{grid} {}
-  virtual void update(EntityManager& entity_manager) override;
+    class MovementSystem : public System {
+    public:
+        MovementSystem(std::shared_ptr<Grid> grid) : grid_{grid} {}
+        virtual void update(EntityManager &entity_manager) override;
 
- private:
-  void _move_snake(Entity& entity);
-  std::shared_ptr<Grid> grid_;
-};
+    private:
+        void _move_snake(Entity &entity);
+        std::shared_ptr<Grid> grid_;
+    };
 
-class CollisionSystem : public System {
- public:
-  virtual void update(EntityManager& entity_manager) override;
-};
-}  // namespace snake_game
+    class CollisionSystem : public System {
+    public:
+        virtual void update(EntityManager &entity_manager) override;
+    };
+} // namespace snake_game
 
 #endif

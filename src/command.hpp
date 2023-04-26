@@ -5,30 +5,30 @@
 #include "entity.hpp"
 
 namespace snake_game {
-struct Command {
-  virtual ~Command(){};
-  virtual void execute() = 0;
-};
+    struct Command {
+        virtual ~Command(){};
+        virtual void execute() = 0;
+    };
 
-class QuitCommand final : public Command {
- public:
-  QuitCommand(bool& quit) : quit_{quit} {}
-  virtual void execute() override { quit_ = true; };
+    class QuitCommand final : public Command {
+    public:
+        QuitCommand(bool &quit) : quit_{quit} {}
+        virtual void execute() override { quit_ = true; };
 
- private:
-  bool& quit_;
-};
+    private:
+        bool &quit_;
+    };
 
-class ChangeDirectionCommand final : public Command {
- public:
-  ChangeDirectionCommand(Entity& entity,
-                         VelocityComponent::Direction direction);
-  virtual void execute() override;
+    class ChangeDirectionCommand final : public Command {
+    public:
+        ChangeDirectionCommand(Entity &entity,
+                               VelocityComponent::Direction direction);
+        virtual void execute() override;
 
- private:
-  Entity& entity_;
-  VelocityComponent::Direction new_direction_;
-};
-}  // namespace snake_game
+    private:
+        Entity &entity_;
+        VelocityComponent::Direction new_direction_;
+    };
+} // namespace snake_game
 
 #endif
