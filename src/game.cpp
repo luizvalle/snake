@@ -32,7 +32,7 @@ namespace snake_game {
         while (!game_over_) {
             input_handler_->handle_input();
             for (auto &system : systems_) {
-                system->update(*entity_manager_);
+                system->update(entity_manager_->begin(), entity_manager_->end());
             }
             SDL_Delay(5000 / 60);
         }
