@@ -2,8 +2,7 @@
 #define __SYSTEM_HPP__
 
 #include <memory>
-#include <iterator>
-#include <concepts>
+#include <vector>
 
 #include "entity.hpp"
 #include "entity_manager.hpp"
@@ -13,13 +12,13 @@
 namespace snake_game {
     struct System {
         virtual ~System() {}
-        virtual void update(EntityManager::EntityIterator start, EntityManager::EntityIterator end) = 0;
+        virtual void update(EntityManager &entity_manager) = 0;
     };
 
     class RenderSystem final : public System {
     public:
         RenderSystem(std::shared_ptr<Graphics> graphics) : graphics_{graphics} {}
-        virtual void update(EntityManager::EntityIterator start, EntityManager::EntityIterator end) override;
+        virtual void update(EntityManager &entity_manager) override;
 
     private:
         void _render_normal(const PositionComponent &position,
@@ -31,7 +30,7 @@ namespace snake_game {
     class MovementSystem : public System {
     public:
         MovementSystem(std::shared_ptr<Grid> grid) : grid_{grid} {}
-        virtual void update(EntityManager::EntityIterator start, EntityManager::EntityIterator end) override;
+        virtual void update(EntityManager &entity_manager) override;
 
     private:
         void _move_snake(Entity &entity);
@@ -40,7 +39,7 @@ namespace snake_game {
 
     class CollisionSystem : public System {
     public:
-        virtual void update(EntityManager::EntityIterator start, EntityManager::EntityIterator end) override;
+        virtual void update(EntityManager &entity_manager) override;
     };
 } // namespace snake_game
 

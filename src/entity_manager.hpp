@@ -16,7 +16,7 @@ namespace snake_game {
     class EntityManager {
     public:
         using EntityMap = std::unordered_map<size_t, std::unique_ptr<Entity>>;
-        class EntityIterator {
+        class EntityManagerIterator {
         public:
             using value_type = Entity;
             using reference = value_type &;
@@ -24,28 +24,28 @@ namespace snake_game {
             using iterator_category = std::forward_iterator_tag;
             using difference_type = std::ptrdiff_t;
 
-            EntityIterator(EntityManager::EntityMap::iterator it) : it_{it} {}
+            EntityManagerIterator(EntityManager::EntityMap::iterator it) : it_{it} {}
 
             reference operator*() const { return *(it_->second); }
 
             pointer operator->() const { return it_->second.get(); }
 
-            EntityIterator &operator++() {
+            EntityManagerIterator &operator++() {
                 ++it_;
                 return *this;
             }
 
-            EntityIterator operator++(int) {
-                EntityIterator temp{*this};
+            EntityManagerIterator operator++(int) {
+                EntityManagerIterator temp{*this};
                 ++it_;
                 return temp;
             }
 
-            bool operator==(const EntityIterator &other) const {
+            bool operator==(const EntityManagerIterator &other) const {
                 return it_ == other.it_;
             }
 
-            bool operator!=(const EntityIterator &other) const {
+            bool operator!=(const EntityManagerIterator &other) const {
                 return !(*this == other);
             }
 
@@ -73,11 +73,11 @@ namespace snake_game {
 
         void add_segment_to_snake(size_t entity_id);
 
-        EntityIterator begin() {
-            return EntityIterator(entities_.begin());
+        EntityManagerIterator begin() {
+            return EntityManagerIterator(entities_.begin());
         }
 
-        EntityIterator end() { return EntityIterator(entities_.end()); }
+        EntityManagerIterator end() { return EntityManagerIterator(entities_.end()); }
 
     private:
         std::pair<int32_t, int32_t> _get_random_empty_position();
