@@ -17,14 +17,16 @@ namespace snake_game {
 
     class RenderSystem final : public System {
     public:
-        RenderSystem(std::shared_ptr<Graphics> graphics) : graphics_{graphics} {}
+        RenderSystem(std::shared_ptr<Graphics> graphics,
+                     std::shared_ptr<Grid> grid)
+                     : graphics_{graphics}, grid_{grid} {}
         virtual void update(EntityManager &entity_manager) override;
 
     private:
-        void _render_normal(const PositionComponent &position,
-                            const GridCellRenderComponent &render);
-        void _render_snake(Entity &entity);
+        void _render_normal(const GridCellComponent &cell);
+        void _render_snake(const SnakeComponent &snake);
         std::shared_ptr<Graphics> graphics_;
+        std::shared_ptr<Grid> grid_;
     };
 
     class MovementSystem : public System {
@@ -37,7 +39,7 @@ namespace snake_game {
         std::shared_ptr<Grid> grid_;
     };
 
-    class CollisionSystem : public System {
+    class CollisionDetectionSystem : public System {
     public:
         virtual void update(EntityManager &entity_manager) override;
     };

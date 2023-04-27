@@ -7,24 +7,32 @@ namespace snake_game {
     void RenderSystem::update(EntityManager &entity_manager) {
         graphics_->clear();
         for (auto &entity : entity_manager) {
-            if (entity.has_component<PositionComponent>() &&
-                entity.has_component<GridCellRenderComponent>()) {
-                const auto &position = entity.get_component<PositionComponent>();
-                const auto &render = entity.get_component<GridCellRenderComponent>();
-                graphics_->draw_rectangle(position, render);
+            if (entity.has_component<GridCellComponent>()) {
+                _render_normal(entity.get_component<GridCellComponent>());
             } else if (entity.has_component<SnakeComponent>()) {
-                _render_snake(entity);
+                _render_snake(entity.get_component<SnakeComponent>());
             }
         }
         graphics_->present();
     }
 
-    void RenderSystem::_render_snake(Entity &entity) {
-        const auto &snake_component = entity.get_component<SnakeComponent>();
-        for (const auto &segment : snake_component.segments) {
-            const auto &position = segment.position_component;
-            const auto &render = segment.rectangle_render_component;
-            graphics_->draw_rectangle(position, render);
+    void RenderSystem::_render_normal(const GridCellComponent &cell) {
+        const auto &position = cell.position;
+        int x = grid_->position_to_pixel(position.x);
+        int y = grid_->position_to_pixel(position.y);
+        const auto &border_color = cell.border_color;
+        const auto &fill_color = cell.fill_color;
+        graphics_->draw_rectangle(x, y, grid_->cell_size(), grid_->cell_size(),
+                                  border_color.r, border_color.g,
+                                  border_color.b, border_color.a);
+        graphics_->fill_rectangle(x, y, grid_->cell_size(), grid_->cell_size(),
+                                  fill_color.r, fill_color.g, fill_color.b,
+                                  fill_color.a);
+    }
+
+    void RenderSystem::_render_snake(const SnakeComponent &snake) {
+        for (const auto &segment : snake.segments) {
+            _render_normal(segment);
         }
     }
 
@@ -41,8 +49,8 @@ namespace snake_game {
         auto &segments = entity.get_component<SnakeComponent>().segments;
         const auto &velocity_component = entity.get_component<VelocityComponent>();
         const auto &head = segments.front();
-        int16_t new_x = head.position_component.x;
-        int16_t new_y = head.position_component.y;
+        int16_t new_x = head.position.x;
+        int16_t new_y = head.position.y;
         uint16_t speed = velocity_component.speed;
         switch (velocity_component.direction) {
         case VelocityComponent::Direction::UP:
@@ -59,32 +67,30 @@ namespace snake_game {
             break;
         }
         auto &tail = segments.back();
-        tail.position_component.x = new_x;
-        tail.position_component.y = new_y;
+        tail.position.x = new_x;
+        tail.position.y = new_y;
         segments.splice(segments.begin(), segments, --segments.end());
     }
 
-    void CollisionSystem::update(EntityManager &entity_manager) {
+    void CollisionDetectionSystem::update(EntityManager &entity_manager) {
         std::vector<size_t> snake_ids, apple_ids;
         for (auto &entity : entity_manager) {
             size_t id = entity.id();
             if (entity.has_component<SnakeComponent>()) {
                 snake_ids.push_back(id);
-            } else {
+            } else if (entity.has_component<GridCellComponent>()) {
                 apple_ids.push_back(id);
             }
         }
         for (auto snake_id : snake_ids) {
             auto &snake_entity = entity_manager.get_entity(snake_id);
-            auto &head_position =
-                snake_entity.get_component<SnakeComponent>().segments.front().position_component;
+            const auto &head_position =
+                snake_entity.get_component<SnakeComponent>().segments.front().position;
             for (auto apple_id : apple_ids) {
                 auto &apple_entity = entity_manager.get_entity(apple_id);
-                auto &apple_position = apple_entity.get_component<PositionComponent>();
-                if (head_position == apple_position) {
-                    entity_manager.add_segment_to_snake(snake_id);
-                    entity_manager.create_apple();
-                    entity_manager.remove_entity(apple_id);
+                const auto &cell = apple_entity.get_component<GridCellComponent>();
+                auto &apple_position = cell.position;
+                if (head_position == apple_position) { // Snake ate apple
                 }
             }
         }

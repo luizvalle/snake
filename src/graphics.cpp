@@ -7,7 +7,7 @@
 
 namespace snake_game {
     SDLGraphics::SDLGraphics()
-        : window_{nullptr}, renderer_{nullptr}, grid_{nullptr} {
+        : window_{nullptr}, renderer_{nullptr} {
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER)) {
             std::string error_message =
                 std::string("Error initializing SDL: ") + std::string(SDL_GetError());
@@ -50,21 +50,25 @@ namespace snake_game {
         }
     }
 
-    void SDLGraphics::draw_rectangle(const PositionComponent &position,
-                                     const GridCellRenderComponent &render) {
+    void SDLGraphics::draw_rectangle(int x, int y, int w, int h, uint8_t r,
+                                     uint8_t g, uint8_t b, uint8_t a) {
         if (!renderer_) {
             throw std::runtime_error("Render not initialized.");
         }
-        int x = grid_->position_to_pixel(position.x);
-        int y = grid_->position_to_pixel(position.y);
-        SDL_Rect rect{x, y, grid_->cell_size(), grid_->cell_size()};
-        SDL_SetRenderDrawColor(renderer_, render.fill_color.r, render.fill_color.g,
-                               render.fill_color.b, render.fill_color.a);
-        SDL_RenderFillRect(renderer_, &rect);
-        SDL_SetRenderDrawColor(renderer_, render.border_color.r,
-                               render.border_color.g, render.border_color.b,
-                               render.border_color.a);
+        SDL_Rect rect{x, y, w, h};
+        SDL_SetRenderDrawColor(renderer_, r, g, b, a);
         SDL_RenderDrawRect(renderer_, &rect);
+        SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
+    }
+
+    void SDLGraphics::fill_rectangle(int x, int y, int w, int h, uint8_t r,
+                                     uint8_t g, uint8_t b, uint8_t a) {
+        if (!renderer_) {
+            throw std::runtime_error("Render not initialized.");
+        }
+        SDL_Rect rect{x, y, w, h};
+        SDL_SetRenderDrawColor(renderer_, r, g, b, a);
+        SDL_RenderFillRect(renderer_, &rect);
         SDL_SetRenderDrawColor(renderer_, 0, 0, 0, 255);
     }
 } // namespace snake_game

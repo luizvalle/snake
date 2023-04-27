@@ -9,7 +9,7 @@ EXECUTABLE = $(BIN_DIR)/snake_game
 
 # Compiler and flags
 CXX=clang++
-CXXFLAGS=-I$(SDL_HEADERS_DIR) -std=c++20
+CXXFLAGS=-I$(SDL_HEADERS_DIR) -std=c++20 -g
 LDFLAGS=-L$(SDL_LIB_DIR) -lSDL2
 
 # Targets

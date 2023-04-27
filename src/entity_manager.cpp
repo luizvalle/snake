@@ -15,9 +15,9 @@ namespace snake_game {
         PositionComponent position{x, y};
         ColorComponent fill_color{0, 71, 100, 255};
         ColorComponent border_color{0, 0, 0, 255};
-        GridCellRenderComponent rect_render{fill_color, border_color};
+        GridCellComponent segment{position, fill_color, border_color};
         entity_ptr->get_component<SnakeComponent>().segments.emplace_back(
-            position, rect_render);
+            position, fill_color, border_color);
         entities_.emplace(id, entity_ptr);
         return *entity_ptr;
     }
@@ -26,10 +26,11 @@ namespace snake_game {
         size_t id = next_id_++;
         Entity *entity_ptr = new Entity(id);
         auto [x, y] = _get_random_empty_position();
-        entity_ptr->add_component<PositionComponent>(x, y);
+        PositionComponent position{x, y};
         ColorComponent fill_color{195, 55, 47, 255};
         ColorComponent border_color{0, 0, 0, 255};
-        entity_ptr->add_component<GridCellRenderComponent>(fill_color, border_color);
+        entity_ptr->add_component<GridCellComponent>(position, fill_color,
+                                                     border_color);
         entities_.emplace(id, entity_ptr);
         return *entity_ptr;
     }
@@ -39,14 +40,23 @@ namespace snake_game {
         std::vector<std::vector<bool>> occupied_cells(num_rows,
                                                       std::vector<bool>(num_cols, false));
         for (auto &entity : *this) {
-            if (!entity.has_component<PositionComponent>()) {
-                continue;
+            if (entity.has_component<GridCellComponent>()) {
+                const auto &cell = entity.get_component<GridCellComponent>();
+                const auto &position = cell.position;
+                if (position.x < 0 || position.y < 0 || position.x >= num_rows || position.y >= num_cols) {
+                    continue;
+                }
+                occupied_cells[position.x][position.y] = true;
+            } else if (entity.has_component<SnakeComponent>()) {
+                const auto &snake = entity.get_component<SnakeComponent>();
+                for (const auto &cell : snake.segments) {
+                    const auto &position = cell.position;
+                    if (position.x < 0 || position.y < 0 || position.x >= num_rows || position.y >= num_cols) {
+                        continue;
+                    }
+                    occupied_cells[position.x][position.y] = true;
+                }
             }
-            auto &position = entity.get_component<PositionComponent>();
-            if (position.x < 0 || position.y < 0 || position.x >= num_rows || position.y >= num_cols) {
-                continue;
-            }
-            occupied_cells[position.x][position.y] = true;
         }
         std::vector<std::pair<int32_t, int32_t>> free_positions;
         for (size_t row = 0; row < num_rows; row++) {
@@ -69,10 +79,9 @@ namespace snake_game {
         auto &segments = snake.get_component<SnakeComponent>().segments;
         auto &tail = segments.back();
 
-        PositionComponent position = tail.position_component;
+        PositionComponent position = tail.position;
         ColorComponent fill_color{0, 71, 100, 255};
         ColorComponent border_color{0, 0, 0, 255};
-        GridCellRenderComponent rect_render{fill_color, border_color};
-        segments.emplace_back(position, rect_render);
+        segments.emplace_back(position, fill_color, border_color);
     }
 } // namespace snake_game

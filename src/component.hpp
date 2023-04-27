@@ -34,24 +34,19 @@ namespace snake_game {
         uint8_t r, g, b, a;
     };
 
-    struct GridCellRenderComponent : public Component {
-        GridCellRenderComponent(const ColorComponent &fill_color,
-                                const ColorComponent &border_color)
-            : fill_color{fill_color}, border_color{border_color} {}
+    struct GridCellComponent : public Component {
+        GridCellComponent(const PositionComponent &position,
+                          const ColorComponent &fill_color,
+                          const ColorComponent &border_color)
+            : position{position}, fill_color{fill_color},
+            border_color{border_color} {}
+        PositionComponent position;
         ColorComponent fill_color;
         ColorComponent border_color;
     };
 
-    struct SegmentComponent final : public Component {
-        SegmentComponent(const PositionComponent &position,
-                         const GridCellRenderComponent &rect_render)
-            : position_component{position}, rectangle_render_component{rect_render} {}
-        PositionComponent position_component;
-        GridCellRenderComponent rectangle_render_component;
-    };
-
     struct SnakeComponent final : public Component {
-        std::list<SegmentComponent> segments;
+        std::list<GridCellComponent> segments;
     };
 } // namespace snake_game
 

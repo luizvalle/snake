@@ -24,11 +24,9 @@ int main(void) {
 
     auto grid = std::make_shared<Grid>(kCellSize, kWindowWidth / kCellSize,
                                        kWindowHeight / kCellSize);
-    graphics->add_grid(grid);
-
-    auto render_system = std::make_unique<RenderSystem>(graphics);
+    auto render_system = std::make_unique<RenderSystem>(graphics, grid);
     auto movement_system = std::make_unique<MovementSystem>(grid);
-    auto collision_system = std::make_unique<CollisionSystem>();
+    auto collision_system = std::make_unique<CollisionDetectionSystem>();
 
     auto entity_manager = std::make_unique<EntityManager>(grid);
     auto input_handler = std::make_unique<InputHandler>();
