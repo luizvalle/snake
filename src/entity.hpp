@@ -37,6 +37,10 @@ namespace snake_game {
 
         size_t id() const { return id_; }
 
+        bool operator==(const Entity& other) const {
+            return id() == other.id();
+        }
+
     private:
         template <typename T>
         T *_get_component() const {

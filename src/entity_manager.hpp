@@ -53,7 +53,9 @@ namespace snake_game {
             EntityManager::EntityMap::iterator it_;
         };
         EntityManager(std::shared_ptr<Grid> grid) : grid_{grid} {}
+
         Entity &create_snake(int32_t x, int32_t y);
+
         Entity &create_apple();
 
         Entity &get_entity(size_t entity_id) {

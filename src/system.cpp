@@ -3,6 +3,8 @@
 #include <cstddef>
 #include <vector>
 
+#include <iostream>
+
 namespace snake_game {
     void RenderSystem::update(EntityManager &entity_manager) {
         graphics_->clear();
@@ -74,26 +76,27 @@ namespace snake_game {
     }
 
     void CollisionDetectionSystem::update(EntityManager &entity_manager) {
-        // std::vector<size_t> snake_ids, apple_ids;
-        // for (auto &entity : entity_manager) {
-        //     size_t id = entity.id();
-        //     if (entity.has_component<SnakeComponent>()) {
-        //         snake_ids.push_back(id);
-        //     } else if (entity.has_component<GridCellComponent>()) {
-        //         apple_ids.push_back(id);
-        //     }
-        // }
-        // for (auto snake_id : snake_ids) {
-        //     const auto &snake_entity = entity_manager.get_entity(snake_id);
-        //     const auto &head_position =
-        //         snake_entity.get_component<SnakeComponent>().segments.front().position;
-        //     for (auto apple_id : apple_ids) {
-        //         auto &apple_entity = entity_manager.get_entity(apple_id);
-        //         const auto &cell = apple_entity.get_component<GridCellComponent>();
-        //         auto &apple_position = apple_entity.get_component<GridCellComponent>();
-        //         if (head_position == apple_position) { // Snake ate apple
-        //         }
-        //     }
-        // }
+        for (auto it1 = entity_manager.begin(); it1 != entity_manager.end(); ++it1) {
+            auto &entity1 = *it1;
+            if (!entity1.has_component<PositionComponent>()) {
+                continue;
+            }
+            auto it2 = it1;
+            ++it2;
+            for (; it2 != entity_manager.end(); ++it2) {
+                auto &entity2 = *it2;
+                if (entity1 == entity2) {
+                    continue;
+                }
+                if (!entity2.has_component<PositionComponent>()) {
+                    continue;
+                }
+                auto &pos1 = entity1.get_component<PositionComponent>();
+                auto &pos2 = entity2.get_component<PositionComponent>();
+                if (pos1 == pos2) {
+                    
+                }
+            }
+        }
     }
 } // namespace snake_game
