@@ -53,7 +53,7 @@ namespace snake_game {
             EntityManager::EntityMap::iterator it_;
         };
         EntityManager(std::shared_ptr<Grid> grid) : grid_{grid} {}
-        Entity &create_snake(int16_t x, int16_t y);
+        Entity &create_snake(int32_t x, int32_t y);
         Entity &create_apple();
 
         Entity &get_entity(size_t entity_id) {
@@ -81,6 +81,7 @@ namespace snake_game {
 
     private:
         std::pair<int32_t, int32_t> _get_random_empty_position();
+        Entity &_create_snake_segment(int32_t x, int32_t y);
         std::shared_ptr<Grid> grid_;
         std::mt19937 random_number_generator_{std::random_device{}()};
         EntityMap entities_;

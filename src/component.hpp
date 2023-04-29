@@ -2,7 +2,6 @@
 #define __COMPONENTS_HPP__
 
 #include <cstdint>
-#include <list>
 
 namespace snake_game {
     struct Component {
@@ -34,20 +33,15 @@ namespace snake_game {
         uint8_t r, g, b, a;
     };
 
-    struct GridCellComponent : public Component {
-        GridCellComponent(const PositionComponent &position,
-                          const ColorComponent &fill_color,
-                          const ColorComponent &border_color)
-            : position{position}, fill_color{fill_color},
-            border_color{border_color} {}
-        PositionComponent position;
-        ColorComponent fill_color;
-        ColorComponent border_color;
+    template <typename T>
+    struct NodeComponent final : public Component {
+        NodeComponent(T *container)
+        : container{container}, prev{this}, next{this} {}
+        T *container;
+        NodeComponent *prev, *next;
     };
 
-    struct SnakeComponent final : public Component {
-        std::list<GridCellComponent> segments;
-    };
+    struct SnakeHeadTagComponent final : Component {};
 } // namespace snake_game
 
 #endif

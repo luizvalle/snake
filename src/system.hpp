@@ -23,8 +23,6 @@ namespace snake_game {
         virtual void update(EntityManager &entity_manager) override;
 
     private:
-        void _render_normal(const GridCellComponent &cell);
-        void _render_snake(const SnakeComponent &snake);
         std::shared_ptr<Graphics> graphics_;
         std::shared_ptr<Grid> grid_;
     };
