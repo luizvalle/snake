@@ -13,7 +13,8 @@ namespace snake_game {
         return entity_ptr;
     }
 
-    std::shared_ptr<Entity> EntityManager::_create_snake_segment(int32_t x, int32_t y) {
+    std::shared_ptr<Entity> EntityManager::_create_snake_segment(int32_t x,
+                                                                 int32_t y) {
         auto entity_ptr = _create_entity();
         entity_ptr->add_component<PositionComponent>(x, y);
         entity_ptr->add_component<ColorComponent>(0, 71, 100, 255);
@@ -29,6 +30,16 @@ namespace snake_game {
         auto [x, y] = _get_random_empty_position();
         entity_ptr->add_component<PositionComponent>(x, y);
         entity_ptr->add_component<ColorComponent>(195, 55, 47, 255);
+        entity_ptr->add_component<AppleTagComponent>();
+        return entity_ptr;
+    }
+
+    std::shared_ptr<Entity> EntityManager::create_collision(
+        std::weak_ptr<Entity> entity1,
+        std::weak_ptr<Entity> entity2) {
+        auto entity_ptr = _create_entity();
+        entity_ptr->add_component<EntityToEntityCollisionComponent<Entity>>(entity1,
+                                                                            entity2);
         return entity_ptr;
     }
 

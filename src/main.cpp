@@ -26,7 +26,8 @@ int main(void) {
                                        kWindowHeight / kCellSize);
     auto render_system = std::make_unique<RenderSystem>(graphics, grid);
     auto movement_system = std::make_unique<MovementSystem>(grid);
-    auto collision_system = std::make_unique<CollisionDetectionSystem>();
+    auto collision_detection_system = std::make_unique<CollisionDetectionSystem>();
+    auto entity_collision_handler_system = std::make_unique<EntityCollisionHandlerSystem>();
 
     auto entity_manager = std::make_unique<EntityManager>(grid);
     auto input_handler = std::make_unique<InputHandler>();
@@ -34,7 +35,8 @@ int main(void) {
     Game game{graphics, std::move(entity_manager), std::move(input_handler)};
     game.add_system(std::move(movement_system));
     game.add_system(std::move(render_system));
-    game.add_system(std::move(collision_system));
+    game.add_system(std::move(collision_detection_system));
+    game.add_system(std::move(entity_collision_handler_system));
     game.start();
 
     return 0;

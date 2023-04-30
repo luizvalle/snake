@@ -41,6 +41,10 @@ namespace snake_game {
     public:
         virtual void update(EntityManager &entity_manager) override;
     };
+
+    class EntityCollisionHandlerSystem : public System {
+        virtual void update(EntityManager &entity_manager) override;
+    };
 } // namespace snake_game
 
 #endif

@@ -9,8 +9,7 @@ namespace snake_game {
     void RenderSystem::update(EntityManager &entity_manager) {
         graphics_->clear();
         for (auto &entity : entity_manager) {
-            if (!(entity.has_component<PositionComponent>()
-                  && entity.has_component<ColorComponent>())) {
+            if (!(entity.has_component<PositionComponent>() && entity.has_component<ColorComponent>())) {
                 continue;
             }
             const auto &position = *entity.get_component<PositionComponent>();
@@ -28,10 +27,7 @@ namespace snake_game {
 
     void MovementSystem::update(EntityManager &entity_manager) {
         for (auto &entity : entity_manager) {
-            if (entity.has_component<SnakeHeadTagComponent>()
-                && entity.has_component<PositionComponent>()
-                && entity.has_component<NodeComponent<Entity>>()
-                && entity.has_component<VelocityComponent>()) {
+            if (entity.has_component<SnakeHeadTagComponent>() && entity.has_component<PositionComponent>() && entity.has_component<NodeComponent<Entity>>() && entity.has_component<VelocityComponent>()) {
                 _move_snake(entity);
             }
         }
@@ -56,17 +52,22 @@ namespace snake_game {
         if (!new_tail_node_ptr) {
             throw std::runtime_error("The new tail node no longer exists.");
         }
-        auto new_tail_ptr = new_tail_node_ptr->container.lock();
-        if (!new_tail_ptr) {
-            throw std::runtime_error("The new tail entity no longer exists.");
-        }
 
         old_tail_position = head_position;
+
+        // Disconnect the old tail
         new_tail_node_ptr->next = head_node_ptr;
+        head_node_ptr->prev = new_tail_node_ptr;
+
+        // Insert the old tail in the second position
         old_tail_node_ptr->next = head_node_ptr->next;
         old_tail_node_ptr->prev = head_node_ptr;
+        auto old_second_node_ptr = head_node_ptr->next.lock();
+        if (!old_second_node_ptr) {
+            throw std::runtime_error("The old second node no longer exists.");
+        }
+        old_second_node_ptr->prev = old_tail_node_ptr;
         head_node_ptr->next = old_tail_node_ptr;
-        head_node_ptr->prev = new_tail_node_ptr;
 
         int16_t new_x = head_position.x;
         int16_t new_y = head_position.y;
@@ -108,9 +109,39 @@ namespace snake_game {
                 auto &pos1 = *entity1.get_component<PositionComponent>();
                 auto &pos2 = *entity2.get_component<PositionComponent>();
                 if (pos1 == pos2) {
-                    
+                    entity_manager.create_collision(&it1, &it2);
                 }
             }
+        }
+    }
+
+    void EntityCollisionHandlerSystem::update(EntityManager &entity_manager) {
+        std::vector<size_t> ids_to_remove;
+        for (auto &entity : entity_manager) {
+            if (!entity.has_component<EntityToEntityCollisionComponent<Entity>>()) {
+                continue;
+            }
+            ids_to_remove.push_back(entity.id());
+            auto &collision = *entity.get_component<EntityToEntityCollisionComponent<Entity>>();
+            auto entity1_ptr = collision.entity1.lock();
+            auto entity2_ptr = collision.entity2.lock();
+            if (!entity1_ptr || !entity2_ptr) {
+                continue;
+            }
+            if (entity1_ptr->has_component<SnakeHeadTagComponent>()
+                && entity2_ptr->has_component<AppleTagComponent>()) {
+                entity_manager.add_segment_to_snake(entity1_ptr->id());
+                ids_to_remove.push_back(entity2_ptr->id());
+                entity_manager.create_apple();
+            } else if (entity1_ptr->has_component<AppleTagComponent>()
+                       && entity2_ptr->has_component<SnakeHeadTagComponent>()) {
+                entity_manager.add_segment_to_snake(entity2_ptr->id());
+                ids_to_remove.push_back(entity1_ptr->id());
+                entity_manager.create_apple();
+            }
+        }
+        for (auto id : ids_to_remove) {
+            entity_manager.remove_entity(id);
         }
     }
 } // namespace snake_game

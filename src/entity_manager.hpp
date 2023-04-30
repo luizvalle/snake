@@ -30,6 +30,10 @@ namespace snake_game {
 
             pointer operator->() const { return it_->second.get(); }
 
+            std::shared_ptr<Entity> operator&() const {
+                return it_->second;
+            }
+
             EntityManagerIterator &operator++() {
                 ++it_;
                 return *this;
@@ -57,6 +61,9 @@ namespace snake_game {
         std::shared_ptr<Entity> create_snake(int32_t x, int32_t y);
 
         std::shared_ptr<Entity> create_apple();
+
+        std::shared_ptr<Entity> create_collision(std::weak_ptr<Entity> entity1,
+                                                 std::weak_ptr<Entity> entity2);
 
         std::shared_ptr<Entity> get_entity(size_t entity_id) {
             auto iter = entities_.find(entity_id);
