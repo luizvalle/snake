@@ -4,15 +4,23 @@
 
 namespace snake_game {
     ChangeDirectionCommand::ChangeDirectionCommand(
-        Entity &entity, VelocityComponent::Direction direction)
-        : entity_{entity}, new_direction_{direction} {
-        if (!entity_.has_component<VelocityComponent>()) {
+        std::weak_ptr<Entity> entity_ptr, VelocityComponent::Direction direction)
+        : entity_ptr_{entity_ptr}, new_direction_{direction} {
+        auto ptr = entity_ptr_.lock();
+        if (!ptr) {
+            throw std::runtime_error("The entity was deleted.");
+        }
+        if (!ptr->has_component<VelocityComponent>()) {
             throw std::runtime_error("Missing velocity component.");
         }
     }
 
     void ChangeDirectionCommand::execute() {
-        auto &velocity = entity_.get_component<VelocityComponent>();
+        auto entity_ptr = entity_ptr_.lock();
+        if (!entity_ptr) {
+            throw std::runtime_error("The entity was deleted");
+        }
+        auto &velocity = *entity_ptr->get_component<VelocityComponent>();
         auto &direction = velocity.direction;
         if (direction == VelocityComponent::Direction::UP &&
             new_direction_ == VelocityComponent::Direction::DOWN) {

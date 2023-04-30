@@ -11,7 +11,7 @@ namespace snake_game {
         : graphics_{graphics},
           entity_manager_{std::move(entity_manager)},
           input_handler_{std::move(input_handler)} {
-        auto &snake = entity_manager_->create_snake(5, 5);
+        auto snake = entity_manager_->create_snake(5, 5);
         input_handler_->set_quit_command(std::make_unique<QuitCommand>(game_over_));
         input_handler_->bind_command(SDL_Scancode::SDL_SCANCODE_UP,
                                      std::make_unique<ChangeDirectionCommand>(

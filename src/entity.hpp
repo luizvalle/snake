@@ -15,24 +15,24 @@ namespace snake_game {
         Entity(size_t id) : id_{id} {}
         template <typename T>
         bool has_component() const {
-            T *component = _get_component<T>();
-            return component != nullptr;
+            auto component_ptr = _get_component<T>();
+            return component_ptr != nullptr;
         }
 
         template <typename T>
-        T &get_component() {
-            T *component = _get_component<T>();
-            if (!component) {
+        std::shared_ptr<T> get_component() {
+            auto component_ptr = _get_component<T>();
+            if (!component_ptr) {
                 throw std::runtime_error("Could not find component.");
             }
-            return *component;
+            return std::static_pointer_cast<T>(component_ptr);
         }
 
         template <typename T, typename... TArgs>
-        T &add_component(TArgs &&...args) {
+        std::shared_ptr<T> add_component(TArgs &&...args) {
             T *component = new T(std::forward<TArgs>(args)...);
-            components_.emplace_back(component);
-            return *component;
+            auto component_ptr = components_.emplace_back(component);
+            return std::static_pointer_cast<T>(component_ptr);
         }
 
         size_t id() const { return id_; }
@@ -43,16 +43,16 @@ namespace snake_game {
 
     private:
         template <typename T>
-        T *_get_component() const {
-            for (auto &component : components_) {
-                T *component_ptr = dynamic_cast<T *>(component.get());
-                if (component_ptr) {
-                    return component_ptr;
+        std::shared_ptr<T> _get_component() const {
+            for (auto &component_ptr : components_) {
+                auto ptr = std::dynamic_pointer_cast<T>(component_ptr);
+                if (ptr) {
+                    return ptr;
                 }
             }
             return nullptr;
         }
-        std::vector<std::unique_ptr<Component>> components_;
+        std::vector<std::shared_ptr<Component>> components_;
         size_t id_;
     };
 } // namespace snake_game

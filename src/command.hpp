@@ -4,6 +4,8 @@
 #include "component.hpp"
 #include "entity.hpp"
 
+#include <memory>
+
 namespace snake_game {
     struct Command {
         virtual ~Command(){};
@@ -21,12 +23,12 @@ namespace snake_game {
 
     class ChangeDirectionCommand final : public Command {
     public:
-        ChangeDirectionCommand(Entity &entity,
+        ChangeDirectionCommand(std::weak_ptr<Entity> entity_ptr,
                                VelocityComponent::Direction direction);
         virtual void execute() override;
 
     private:
-        Entity &entity_;
+        std::weak_ptr<Entity> entity_ptr_;
         VelocityComponent::Direction new_direction_;
     };
 } // namespace snake_game

@@ -2,6 +2,7 @@
 #define __COMPONENTS_HPP__
 
 #include <cstdint>
+#include <memory>
 
 namespace snake_game {
     struct Component {
@@ -35,10 +36,9 @@ namespace snake_game {
 
     template <typename T>
     struct NodeComponent final : public Component {
-        NodeComponent(T *container)
-        : container{container}, prev{this}, next{this} {}
-        T *container;
-        NodeComponent *prev, *next;
+        NodeComponent(std::weak_ptr<T> container) : container{container} {}
+        std::weak_ptr<T> container;
+        std::weak_ptr<NodeComponent<T>> prev, next;
     };
 
     struct SnakeHeadTagComponent final : Component {};

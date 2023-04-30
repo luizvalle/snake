@@ -15,7 +15,7 @@
 namespace snake_game {
     class EntityManager {
     public:
-        using EntityMap = std::unordered_map<size_t, std::unique_ptr<Entity>>;
+        using EntityMap = std::unordered_map<size_t, std::shared_ptr<Entity>>;
         class EntityManagerIterator {
         public:
             using value_type = Entity;
@@ -54,14 +54,14 @@ namespace snake_game {
         };
         EntityManager(std::shared_ptr<Grid> grid) : grid_{grid} {}
 
-        Entity &create_snake(int32_t x, int32_t y);
+        std::shared_ptr<Entity> create_snake(int32_t x, int32_t y);
 
-        Entity &create_apple();
+        std::shared_ptr<Entity> create_apple();
 
-        Entity &get_entity(size_t entity_id) {
+        std::shared_ptr<Entity> get_entity(size_t entity_id) {
             auto iter = entities_.find(entity_id);
             if (iter != entities_.end()) {
-                return *(iter->second);
+                return iter->second;
             }
             throw std::runtime_error("An entity with the given id does not exist.");
         }
@@ -79,11 +79,19 @@ namespace snake_game {
             return EntityManagerIterator(entities_.begin());
         }
 
-        EntityManagerIterator end() { return EntityManagerIterator(entities_.end()); }
+        EntityManagerIterator end() {
+            return EntityManagerIterator(entities_.end());
+        }
 
     private:
         std::pair<int32_t, int32_t> _get_random_empty_position();
-        Entity &_create_snake_segment(int32_t x, int32_t y);
+        std::shared_ptr<Entity> _create_entity() {
+            size_t id = next_id_++;
+            auto entity_ptr = std::make_shared<Entity>(id);
+            entities_.emplace(id, entity_ptr);
+            return entity_ptr;
+        }
+        std::shared_ptr<Entity> _create_snake_segment(int32_t x, int32_t y);
         std::shared_ptr<Grid> grid_;
         std::mt19937 random_number_generator_{std::random_device{}()};
         EntityMap entities_;
