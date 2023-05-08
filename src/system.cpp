@@ -115,13 +115,12 @@ namespace snake_game {
         }
     }
 
-    void EntityCollisionHandlerSystem::update(EntityManager &entity_manager) {
-        std::vector<size_t> ids_to_remove;
+    void CollisionHandlerSystem::update(EntityManager &entity_manager) {
         for (auto &entity : entity_manager) {
             if (!entity.has_component<EntityToEntityCollisionComponent<Entity>>()) {
                 continue;
             }
-            ids_to_remove.push_back(entity.id());
+            entity.add_component<ToRemoveTagComponent>();
             auto &collision = *entity.get_component<EntityToEntityCollisionComponent<Entity>>();
             auto entity1_ptr = collision.entity1.lock();
             auto entity2_ptr = collision.entity2.lock();
@@ -130,18 +129,48 @@ namespace snake_game {
             }
             if (entity1_ptr->has_component<SnakeHeadTagComponent>()
                 && entity2_ptr->has_component<AppleTagComponent>()) {
-                entity_manager.add_segment_to_snake(entity1_ptr->id());
-                ids_to_remove.push_back(entity2_ptr->id());
+                entity_manager.add_segment_to_snake(*entity1_ptr);
+                entity2_ptr->add_component<ToRemoveTagComponent>();
                 entity_manager.create_apple();
             } else if (entity1_ptr->has_component<AppleTagComponent>()
                        && entity2_ptr->has_component<SnakeHeadTagComponent>()) {
-                entity_manager.add_segment_to_snake(entity2_ptr->id());
-                ids_to_remove.push_back(entity1_ptr->id());
+                entity_manager.add_segment_to_snake(*entity2_ptr);
+                entity1_ptr->add_component<ToRemoveTagComponent>();
                 entity_manager.create_apple();
+            } else if (entity1_ptr->has_component<SnakeHeadTagComponent>()) {
+                _delete_snake(*entity1_ptr);
+            } else if (entity2_ptr->has_component<SnakeHeadTagComponent>()) {
+                _delete_snake(*entity2_ptr);
             }
         }
-        for (auto id : ids_to_remove) {
-            entity_manager.remove_entity(id);
+    }
+
+    void CollisionHandlerSystem::_delete_snake(Entity &snake_head) const {
+        if (!snake_head.has_component<SnakeHeadTagComponent>()
+            || !snake_head.has_component<NodeComponent<Entity>>()) {
+            throw std::runtime_error("Not a snake head.");
+        }
+        snake_head.add_component<ToRemoveTagComponent>();
+        auto head_node_ptr = snake_head.get_component<NodeComponent<Entity>>();
+        for (auto node_ptr = head_node_ptr->next.lock();
+             node_ptr && node_ptr != head_node_ptr;
+             node_ptr = node_ptr->next.lock()) {
+            auto entity = node_ptr->container.lock();
+            if (!entity) {
+                continue;
+            }
+            entity->add_component<ToRemoveTagComponent>();
+        }
+    }
+
+    void GarbageCollectorSystem::update(EntityManager &entity_manager) {
+        for (auto it = entity_manager.begin(); it != entity_manager.end();) {
+            auto &entity = *it;
+            if (!entity.has_component<ToRemoveTagComponent>()) {
+                ++it;
+                continue;
+            }
+            it = entity_manager.erase(it);
         }
     }
 } // namespace snake_game

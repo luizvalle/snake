@@ -39,7 +39,7 @@ namespace snake_game {
         std::weak_ptr<Entity> entity2) {
         auto entity_ptr = _create_entity();
         entity_ptr->add_component<EntityToEntityCollisionComponent<Entity>>(entity1,
-                                                                            entity2);
+                                                                           entity2);
         return entity_ptr;
     }
 
@@ -70,13 +70,12 @@ namespace snake_game {
         return free_positions[i];
     }
 
-    void EntityManager::add_segment_to_snake(size_t entity_id) {
-        auto entity_ptr = get_entity(entity_id);
-        if (!(entity_ptr->has_component<SnakeHeadTagComponent>()
-              && entity_ptr->has_component<NodeComponent<Entity>>())) {
+    void EntityManager::add_segment_to_snake(Entity &entity) {
+        if (!(entity.has_component<SnakeHeadTagComponent>()
+              && entity.has_component<NodeComponent<Entity>>())) {
             throw std::runtime_error("Cannot add segment to non-snake head.");
         }
-        auto head_node_ptr = entity_ptr->get_component<NodeComponent<Entity>>();
+        auto head_node_ptr = entity.get_component<NodeComponent<Entity>>();
         auto old_tail_node_ptr = head_node_ptr->prev.lock();
         if (!old_tail_node_ptr) {
             throw std::runtime_error("The tail node was deleted");

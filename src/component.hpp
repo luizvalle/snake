@@ -14,7 +14,7 @@ namespace snake_game {
         bool operator==(const PositionComponent &other) const {
             return (x == other.x) && (y == other.y);
         }
-        PositionComponent& operator=(PositionComponent &other) {
+        PositionComponent &operator=(PositionComponent &other) {
             x = other.x;
             y = other.y;
             return *this;
@@ -54,15 +54,11 @@ namespace snake_game {
     struct EntityToEntityCollisionComponent final : Component {
         EntityToEntityCollisionComponent(std::weak_ptr<T> entity1,
                                          std::weak_ptr<T> entity2)
-                                         : entity1{entity1}, entity2{entity2} {}
+            : entity1{entity1}, entity2{entity2} {}
         std::weak_ptr<T> entity1, entity2;
     };
 
-    template <typename T>
-    struct WallCollisionComponent final : Component {
-        WallCollisionComponent(std::weak_ptr<T> entity) : entity{entity} {}
-        std::weak_ptr<T> entity;
-    };
+    struct ToRemoveTagComponent final : Component {};
 } // namespace snake_game
 
 #endif

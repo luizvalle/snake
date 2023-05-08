@@ -6,7 +6,7 @@
 #include <memory>
 #include <random>
 #include <stdexcept>
-#include <unordered_map>
+#include <list>
 #include <utility>
 
 #include "entity.hpp"
@@ -15,8 +15,9 @@
 namespace snake_game {
     class EntityManager {
     public:
-        using EntityMap = std::unordered_map<size_t, std::shared_ptr<Entity>>;
+        using EntityList = std::list<std::shared_ptr<Entity>>;
         class EntityManagerIterator {
+            friend class EntityManager;
         public:
             using value_type = Entity;
             using reference = value_type &;
@@ -24,14 +25,14 @@ namespace snake_game {
             using iterator_category = std::forward_iterator_tag;
             using difference_type = std::ptrdiff_t;
 
-            EntityManagerIterator(EntityManager::EntityMap::iterator it) : it_{it} {}
+            EntityManagerIterator(EntityManager::EntityList::iterator it) : it_{it} {}
 
-            reference operator*() const { return *(it_->second); }
+            reference operator*() const { return **it_; }
 
-            pointer operator->() const { return it_->second.get(); }
+            pointer operator->() const { return it_->get(); }
 
             std::shared_ptr<Entity> operator&() const {
-                return it_->second;
+                return *it_;
             }
 
             EntityManagerIterator &operator++() {
@@ -54,7 +55,7 @@ namespace snake_game {
             }
 
         private:
-            EntityManager::EntityMap::iterator it_;
+            EntityManager::EntityList::iterator it_;
         };
         EntityManager(std::shared_ptr<Grid> grid) : grid_{grid} {}
 
@@ -65,22 +66,7 @@ namespace snake_game {
         std::shared_ptr<Entity> create_collision(std::weak_ptr<Entity> entity1,
                                                  std::weak_ptr<Entity> entity2);
 
-        std::shared_ptr<Entity> get_entity(size_t entity_id) {
-            auto iter = entities_.find(entity_id);
-            if (iter != entities_.end()) {
-                return iter->second;
-            }
-            throw std::runtime_error("An entity with the given id does not exist.");
-        }
-
-        void remove_entity(size_t entity_id) {
-            auto iter = entities_.find(entity_id);
-            if (iter != entities_.end()) {
-                entities_.erase(iter);
-            }
-        }
-
-        void add_segment_to_snake(size_t entity_id);
+        void add_segment_to_snake(Entity &entity);
 
         EntityManagerIterator begin() {
             return EntityManagerIterator(entities_.begin());
@@ -90,18 +76,21 @@ namespace snake_game {
             return EntityManagerIterator(entities_.end());
         }
 
+        EntityManagerIterator erase(EntityManagerIterator& it) {
+            return EntityManagerIterator(entities_.erase(it.it_));
+        }
+
     private:
         std::pair<int32_t, int32_t> _get_random_empty_position();
         std::shared_ptr<Entity> _create_entity() {
             size_t id = next_id_++;
             auto entity_ptr = std::make_shared<Entity>(id);
-            entities_.emplace(id, entity_ptr);
-            return entity_ptr;
+            return entities_.emplace_back(entity_ptr);
         }
         std::shared_ptr<Entity> _create_snake_segment(int32_t x, int32_t y);
         std::shared_ptr<Grid> grid_;
         std::mt19937 random_number_generator_{std::random_device{}()};
-        EntityMap entities_;
+        EntityList entities_;
         size_t next_id_ = 0;
     };
 } // namespace snake_game

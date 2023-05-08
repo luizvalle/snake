@@ -19,7 +19,7 @@ namespace snake_game {
     public:
         RenderSystem(std::shared_ptr<Graphics> graphics,
                      std::shared_ptr<Grid> grid)
-                     : graphics_{graphics}, grid_{grid} {}
+            : graphics_{graphics}, grid_{grid} {}
         virtual void update(EntityManager &entity_manager) override;
 
     private:
@@ -42,7 +42,15 @@ namespace snake_game {
         virtual void update(EntityManager &entity_manager) override;
     };
 
-    class EntityCollisionHandlerSystem : public System {
+    class CollisionHandlerSystem : public System {
+    public:
+        virtual void update(EntityManager &entity_manager) override;
+    private:
+        void _delete_snake(Entity &snake_head) const;
+    };
+
+    class GarbageCollectorSystem : public System {
+    public:
         virtual void update(EntityManager &entity_manager) override;
     };
 } // namespace snake_game

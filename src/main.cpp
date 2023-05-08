@@ -27,7 +27,8 @@ int main(void) {
     auto render_system = std::make_unique<RenderSystem>(graphics, grid);
     auto movement_system = std::make_unique<MovementSystem>(grid);
     auto collision_detection_system = std::make_unique<CollisionDetectionSystem>();
-    auto entity_collision_handler_system = std::make_unique<EntityCollisionHandlerSystem>();
+    auto entity_collision_handler_system = std::make_unique<CollisionHandlerSystem>();
+    auto garbage_collector_system = std::make_unique<GarbageCollectorSystem>();
 
     auto entity_manager = std::make_unique<EntityManager>(grid);
     auto input_handler = std::make_unique<InputHandler>();
@@ -37,6 +38,7 @@ int main(void) {
     game.add_system(std::move(render_system));
     game.add_system(std::move(collision_detection_system));
     game.add_system(std::move(entity_collision_handler_system));
+    game.add_system(std::move(garbage_collector_system));
     game.start();
 
     return 0;
